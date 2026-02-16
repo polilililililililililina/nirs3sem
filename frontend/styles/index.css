@@ -1,0 +1,59 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body,
+#__next {
+  scroll-behavior: smooth;
+}
+
+ul,
+ol {
+  padding: 0 20px;
+  color: #5b729f;
+}
+
+body,
+select {
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  background: #5b729f;
+}
+
+input,
+textarea {
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  outline: none;
+}
+
+button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+p {
+  color: #5b729f;
+}
+
+h1 {
+  font-size: x-large;
+  font-weight: 700;
+  color: #5b729f;
+}
+
+h2 {
+  font-size: larger;
+  font-weight: 700;
+  color: #5b729f;
+}
+
+h3 {
+  font-size: large;
+  font-weight: 700;
+  color: #5b729f;
+}

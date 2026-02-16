@@ -1,0 +1,228 @@
+.historyList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.listHeader {
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.totalCount {
+  font-weight: 500;
+}
+
+.pageInfo {
+  padding: 2px 8px;
+  background: #e9ecef;
+  border-radius: 12px;
+}
+
+.listContainer {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.requestsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listItem {
+  padding: 16px;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.listItem:hover {
+  background: #f8f9fa;
+  border-color: #339af0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.listItem.selected {
+  background: #e7f5ff;
+  border-color: #339af0;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.requestDate {
+  font-size: 13px;
+  font-weight: 500;
+  color: #868e96;
+}
+
+.requestStatus {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+}
+
+.statusCompleted {
+  color: #155724;
+  background: #d4edda;
+}
+
+.statusProcessing {
+  color: #004085;
+  background: #cce5ff;
+}
+
+.statusPending {
+  color: #383d41;
+  background: #e2e3e5;
+}
+
+.statusFailed {
+  color: #721c24;
+  background: #f8d7da;
+}
+
+.itemContent {
+  margin-bottom: 12px;
+}
+
+.descriptionPreview {
+  margin-bottom: 12px;
+}
+
+.descriptionText {
+  display: -webkit-box;
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.noDescription {
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+  color: #adb5bd;
+}
+
+.anomaliesPreview {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.anomaliesLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #868e96;
+}
+
+.anomaliesValue {
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #495057;
+  background: #f1f3f5;
+  border-radius: 4px;
+}
+
+.confidenceIndicator {
+  margin-top: 12px;
+}
+
+.confidenceLabel {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #868e96;
+}
+
+.confidenceBar {
+  height: 6px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  background: #e9ecef;
+  border-radius: 3px;
+}
+
+.confidenceFill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 3px;
+}
+
+.confidenceValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  text-align: right;
+}
+
+.itemFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.viewDetails {
+  font-size: 13px;
+  font-weight: 500;
+  color: #339af0;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  margin-bottom: 16px;
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.emptyText {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.emptySubtext {
+  margin: 0;
+  font-size: 14px;
+  color: #868e96;
+}

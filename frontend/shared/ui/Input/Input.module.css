@@ -1,0 +1,263 @@
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 14px;
+  color: #212529;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.3);
+}
+
+.input::placeholder {
+  color: #adb5bd;
+}
+
+/* Варианты */
+.primary {
+  background-color: #ffffff;
+}
+
+.primary:focus {
+  border-color: #339af0;
+}
+
+.secondary {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+.secondary:focus {
+  background-color: #ffffff;
+  border-color: #339af0;
+}
+
+/* Размеры */
+.small {
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.medium {
+  height: 40px;
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.large {
+  height: 48px;
+  padding: 14px 20px;
+  font-size: 16px;
+}
+
+/* Иконки */
+.withStartIcon {
+  padding-left: 40px;
+}
+
+.withEndIcon {
+  padding-right: 40px;
+}
+
+.startIcon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #868e96;
+  pointer-events: none;
+}
+
+.endIcons {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.endIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #868e96;
+  pointer-events: none;
+}
+
+/* Кнопка очистки */
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  font-size: 14px;
+  color: #868e96;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+  color: #495057;
+  background-color: #e9ecef;
+}
+
+/* Переключатель пароля */
+.passwordToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  font-size: 16px;
+  color: #868e96;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.passwordToggle:hover {
+  color: #495057;
+  background-color: #e9ecef;
+}
+
+/* Состояния */
+.disabled {
+  color: #adb5bd;
+  cursor: not-allowed;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.disabled:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+.readOnly {
+  cursor: default;
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+.error {
+  border-color: #ff6b6b !important;
+}
+
+.error:focus {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3) !important;
+}
+
+/* Футер с текстами */
+.footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 20px;
+}
+
+.helperText {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #868e96;
+}
+
+.errorText {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #ff6b6b;
+}
+
+.counter {
+  font-size: 11px;
+  color: #adb5bd;
+  text-align: right;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .medium {
+    height: 38px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .large {
+    height: 44px;
+    padding: 12px 18px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .small {
+    height: 30px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .medium {
+    height: 36px;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+
+  .large {
+    height: 40px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+.dateIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #868e96;
+  pointer-events: none;
+}

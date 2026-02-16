@@ -1,0 +1,160 @@
+.historyPage {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f8f9fa;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.filterButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+  background: #f1f3f5;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background: #e9ecef;
+}
+
+.filterButton.active {
+  color: white;
+  background: #339af0;
+  border-color: #339af0;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+.searchButton {
+  padding: 8px 16px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  background: #339af0;
+  border: 1px solid #339af0;
+  border-radius: 0 6px 6px 0;
+}
+
+.contentLayout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  min-height: calc(100vh - 200px);
+}
+
+.listColumn {
+  overflow: hidden;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detailColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detailActions {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1200px) {
+  .contentLayout {
+    grid-template-columns: 350px 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .contentLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .filterButtons {
+    flex-wrap: wrap;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .historyPage {
+    padding: 16px;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .headerActions button {
+    flex: 1;
+  }
+}

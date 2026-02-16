@@ -1,0 +1,38 @@
+.top {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resultImg {
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.border {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px;
+  background-color: #ffffff;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+}

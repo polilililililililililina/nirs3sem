@@ -1,0 +1,44 @@
+.wrapper {
+  margin: 60px 100px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.activeTab {
+  padding: 10px 26px 8px;
+  cursor: pointer;
+  background-color: #bcdfef;
+  border-radius: 20px 20px 0 0;
+}
+
+.tab {
+  padding: 10px 26px 8px;
+  cursor: pointer;
+  background-color: #bcdfef;
+  border-radius: 20px 20px 0 0;
+  opacity: 70%;
+}
+
+.tab:hover {
+  opacity: 90%;
+}
+
+.tab:active {
+  opacity: 95%;
+}
+
+.tabName {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.content {
+  min-height: 300px;
+  padding: 40px 20px;
+  background-color: #bcdfef;
+  border-radius: 20px;
+}

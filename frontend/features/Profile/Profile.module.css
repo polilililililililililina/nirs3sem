@@ -1,0 +1,223 @@
+/* Основные стили профиля */
+.profile {
+  max-width: 800px;
+  padding: 32px;
+  margin: 0 auto;
+  font-family: 'Montserrat', sans-serif;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовок */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Форма */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Секции */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionTitle {
+  padding-bottom: 8px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Сетка полей */
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Режим просмотра */
+.viewMode {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.viewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.viewTitle {
+  padding-bottom: 8px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.viewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.viewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+
+.viewLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.viewValue {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #212529;
+}
+
+/* Действия формы */
+.formActions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding-top: 24px;
+  margin-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Ошибки формы */
+.formErrors {
+  padding: 16px;
+  margin-top: 24px;
+  background-color: #fff5f5;
+  border: 1px solid #ffc9c9;
+  border-radius: 8px;
+}
+
+.errorsTitle {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #c92a2a;
+}
+
+.errorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.errorItem {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #c92a2a;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .profile {
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+
+  .fieldsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formActions {
+    grid-template-columns: 1fr;
+  }
+
+  .viewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .sectionTitle,
+  .viewTitle {
+    font-size: 16px;
+  }
+}
+
+/* Состояния */
+.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Ховер эффекты */
+.viewItem:hover {
+  background-color: #f1f3f5;
+  border-color: #dee2e6;
+  transition: all 0.2s ease;
+}
