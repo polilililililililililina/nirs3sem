@@ -158,3 +158,8 @@
     flex: 1;
   }
 }
+
+.error {
+  margin-bottom: 12px;
+  color: red;
+}

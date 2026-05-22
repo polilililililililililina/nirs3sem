@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 360px;
+  padding: 32px;
+  margin: 100px auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.title {
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.link {
+  text-align: center;
+}
+
+.link span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}

@@ -1,79 +1,125 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Dispatch, SetStateAction, useMemo } from 'react'
 
+import { api } from '@shared/api/api'
+import { getErrorMessage } from '@shared/api/getErrorMessage'
 import { Button } from '@shared/ui/Button'
+import { FileUploader } from '@shared/ui/FileUploader'
 import { Input } from '@shared/ui/Input'
 import { InputType } from '@shared/ui/Input/Input'
 
 import cls from './Profile.module.css'
 
 export interface UserProfileData {
-  lastName: string
-  firstName: string
-  middleName?: string
+  name: string
+  surname: string
+  middlename?: string
   email: string
-  organization?: string
-  birthDate?: string
+  job?: string
+  birthday?: string
   position?: string
   phone?: string
+  avatar_url?: string
 }
 
 export interface ProfileProps {
   loading?: boolean
-  onSave?: (data: UserProfileData) => void
   onCancel?: () => void
   readOnly?: boolean
   title?: string
   className?: string
+  setIsAuthorized: Dispatch<SetStateAction<boolean>>
+  setActiveTab: Dispatch<SetStateAction<string>>
 }
 
-const userData = {
-    lastName: 'Иванов',
-    firstName: 'Иван',
-    middleName: 'Иванович',
-    email: 'ivanov@example.com',
-    organization: 'ООО "Больница"',
-    position: 'Главный врач',
-    birthDate: '1990-05-15',
-    phone: '+7 (999) 123-45-67'
-  }
+const initData = {
+  name: '',
+  surname: '',
+  middlename: '',
+  email: '',
+  job: '',
+  birthday: '',
+  position: '',
+  phone: '',
+  avatar_url: '',
+}
 
 export const Profile: React.FC<ProfileProps> = ({
-  loading = false,
-  onSave,
-  onCancel,
-  readOnly = false,
   title = 'Профиль пользователя',
-  className = ''
+  setIsAuthorized,
+  setActiveTab,
 }) => {
-  const [isEditing, setIsEditing] = useState(!readOnly)
-  const [formData, setFormData] = useState<UserProfileData>(userData)
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState<UserProfileData>(initData)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [initialData, setInitialData] = useState<UserProfileData>(initData)
 
-  // Обновляем форму при изменении userData
-  useEffect(() => {
-    setFormData(userData)
-  }, [userData])
+  const uploadAvatar = (file: File | null) => {
+    if (!file) return
+
+    const formDataData = new FormData()
+    formDataData.append('file', file)
+
+    api
+      .post('/users/avatar', formDataData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(({ data }) =>
+        setFormData((prev) => ({
+          ...prev,
+          avatar_url: data.avatar_url,
+        }))
+      )
+      .catch((e) => setError(getErrorMessage(e)))
+  }
+
+  const handleSave = () => {
+    if (!validateForm()) return
+
+    setError(null)
+    setIsLoading(true)
+
+    api
+      .put('/users/me', {
+        name: formData.name,
+        surname: formData.surname,
+        middlename: formData.middlename,
+        birthday: formData.birthday,
+        job: formData.job,
+        position: formData.position,
+        phone: formData.phone,
+      })
+      .then(({ data }) => {
+        setFormData(data)
+        setIsEditing(false)
+      })
+      .catch((e) => setError(getErrorMessage(e)))
+      .finally(() => setIsLoading(false))
+  }
 
   // Обработчик изменения полей
   const handleChange = (field: keyof UserProfileData, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
 
     // Убираем ошибку при изменении поля
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }))
     }
 
     // Помечаем поле как touched
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
-      [field]: true
+      [field]: true,
     }))
   }
 
@@ -82,11 +128,11 @@ export const Profile: React.FC<ProfileProps> = ({
     const newErrors: Record<string, string> = {}
 
     // Обязательные поля
-    if (!formData.lastName.trim()) {
+    if (!formData.surname.trim()) {
       newErrors.lastName = 'Фамилия обязательна'
     }
 
-    if (!formData.firstName.trim()) {
+    if (!formData.name.trim()) {
       newErrors.firstName = 'Имя обязательно'
     }
 
@@ -97,8 +143,8 @@ export const Profile: React.FC<ProfileProps> = ({
     }
 
     // Дата рождения - проверка что пользователь старше 16 лет
-    if (formData.birthDate) {
-      const birthDate = new Date(formData.birthDate)
+    if (formData.birthday) {
+      const birthDate = new Date(formData.birthday)
       const today = new Date()
       const minDate = new Date()
       minDate.setFullYear(today.getFullYear() - 16)
@@ -112,25 +158,19 @@ export const Profile: React.FC<ProfileProps> = ({
     return Object.keys(newErrors).length === 0
   }
 
-  // Обработчик сохранения
-  const handleSave = () => {
-    if (validateForm()) {
-      if (onSave) {
-        onSave(formData)
-      }
-      setIsEditing(false)
-    }
+  const exitFrom = () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+
+    setIsAuthorized(false)
+    setActiveTab('auth')
   }
 
   // Обработчик отмены
   const handleCancel = () => {
-    setFormData(userData)
+    setFormData(initialData)
     setErrors({})
     setIsEditing(false)
-    
-    if (onCancel) {
-      onCancel()
-    }
   }
 
   // Обработчик редактирования
@@ -138,20 +178,23 @@ export const Profile: React.FC<ProfileProps> = ({
     setIsEditing(true)
   }
 
-  // Форматирование даты для input type="date"
-  const formatDateForInput = (dateString?: string) => {
-    if (!dateString) return ''
-    
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) return ''
-    
-    return date.toISOString().split('T')[0]
-  }
-
   // Проверка была ли форма изменена
-  const isFormChanged = () => {
-    return JSON.stringify(formData) !== JSON.stringify(userData)
-  }
+  const isFormChanged = useMemo(() => {
+    return JSON.stringify(formData) !== JSON.stringify(initialData)
+  }, [formData, initialData])
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    api
+      .get('/users/me')
+      .then(({ data }) => {
+        setFormData(data)
+        setInitialData(data)
+      })
+      .catch((e) => setError(getErrorMessage(e)))
+      .finally(() => setIsLoading(false))
+  }, [])
 
   // Рендер поля
   const renderField = (
@@ -170,8 +213,8 @@ export const Profile: React.FC<ProfileProps> = ({
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
           error={errors[field]}
-          disabled={!isEditing || !!(field === 'email' && userData.email)}
-          readOnly={field === 'email' && !!userData.email}
+          disabled={!isEditing || !!(field === 'email' && formData.email)}
+          readOnly={field === 'email' && !!formData.email}
           variant={isEditing ? 'primary' : 'secondary'}
           fullWidth
           required={required}
@@ -193,7 +236,7 @@ export const Profile: React.FC<ProfileProps> = ({
             <div className={cls.viewItem}>
               <span className={cls.viewLabel}>ФИО:</span>
               <span className={cls.viewValue}>
-                {`${formatValue(formData.lastName)} ${formatValue(formData.firstName)} ${formatValue(formData.middleName)}`}
+                {`${formatValue(formData.surname)} ${formatValue(formData.name)} ${formatValue(formData.middlename)}`}
               </span>
             </div>
             <div className={cls.viewItem}>
@@ -203,10 +246,9 @@ export const Profile: React.FC<ProfileProps> = ({
             <div className={cls.viewItem}>
               <span className={cls.viewLabel}>Дата рождения:</span>
               <span className={cls.viewValue}>
-                {formData.birthDate 
-                  ? new Date(formData.birthDate).toLocaleDateString('ru-RU')
-                  : 'Не указано'
-                }
+                {formData.birthday
+                  ? new Date(formData.birthday).toLocaleDateString('ru-RU')
+                  : 'Не указано'}
               </span>
             </div>
           </div>
@@ -217,7 +259,7 @@ export const Profile: React.FC<ProfileProps> = ({
           <div className={cls.viewGrid}>
             <div className={cls.viewItem}>
               <span className={cls.viewLabel}>Организация:</span>
-              <span className={cls.viewValue}>{formatValue(formData.organization)}</span>
+              <span className={cls.viewValue}>{formatValue(formData.job)}</span>
             </div>
             <div className={cls.viewItem}>
               <span className={cls.viewLabel}>Должность:</span>
@@ -241,52 +283,71 @@ export const Profile: React.FC<ProfileProps> = ({
     )
   }
 
+  if (isLoading && !formData.email) {
+    return <p>Загрузка профиля...</p>
+  }
+
   return (
-    <div className={`${cls.profile} ${className}`}>
+    <div className={cls.profile}>
       <div className={cls.header}>
         <h2 className={cls.title}>{title}</h2>
-        
-        {!readOnly && (
-          <div className={cls.actions}>
-            {isEditing ? (
-              <>
-                <Button
-                  variant="primary"
-                  onClick={handleSave}
-                  loading={loading}
-                  disabled={loading || !isFormChanged()}
-                >
-                  Сохранить
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={handleCancel}
-                  disabled={loading}
-                >
-                  Отмена
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="primary"
-                onClick={handleEdit}
-                icon="✏️"
-              >
-                Редактировать
+
+        <div className={cls.actions}>
+          {isEditing ? (
+            <>
+              <Button variant="primary" onClick={handleSave} disabled={!isFormChanged}>
+                Сохранить
               </Button>
-            )}
-          </div>
+              <Button variant="secondary" onClick={handleCancel}>
+                Отмена
+              </Button>
+            </>
+          ) : (
+            <Button variant="primary" onClick={handleEdit} icon="✏️">
+              Редактировать
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className={cls.avatarBlock}>
+        {formData.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`http://localhost:8000/${formData.avatar_url}`}
+            alt="avatar"
+            className={cls.avatar}
+          />
+        ) : (
+          <div className={cls.emptyAvatar}>👤</div>
+        )}
+
+        {isEditing && (
+          <FileUploader
+            acceptType="image"
+            allowedExtensions={['.jpg', '.jpeg', '.png', '.webp']}
+            maxSizeMB={5}
+            buttonText="Загрузить фото"
+            onFileSelect={uploadAvatar}
+            placeholder="Фото профиля"
+          />
         )}
       </div>
 
       {isEditing ? (
-        <form className={cls.form} onSubmit={(e) => { e.preventDefault(); handleSave() }}>
+        <form
+          className={cls.form}
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSave()
+          }}
+        >
           <div className={cls.section}>
             <h3 className={cls.sectionTitle}>Личные данные</h3>
             <div className={cls.fieldsGrid}>
-              {renderField('Фамилия*', 'lastName', 'text', 'Иванов', true)}
-              {renderField('Имя*', 'firstName', 'text', 'Иван', true)}
-              {renderField('Отчество', 'middleName', 'text', 'Иванович')}
+              {renderField('Фамилия*', 'surname', 'text', 'Иванов', true)}
+              {renderField('Имя*', 'name', 'text', 'Иван', true)}
+              {renderField('Отчество', 'middlename', 'text', 'Иванович')}
             </div>
           </div>
 
@@ -295,35 +356,23 @@ export const Profile: React.FC<ProfileProps> = ({
             <div className={cls.fieldsGrid}>
               {renderField('Email', 'email', 'email', 'ivanov@example.com')}
               {renderField('Телефон', 'phone', 'tel', '+7 (999) 123-45-67')}
-              {renderField('Дата рождения', 'birthDate', 'date')}
+              {renderField('Дата рождения', 'birthday', 'date')}
             </div>
           </div>
 
           <div className={cls.section}>
             <h3 className={cls.sectionTitle}>Работа</h3>
             <div className={cls.fieldsGrid}>
-              {renderField('Организация', 'organization', 'text', 'ООО "Компания"')}
+              {renderField('Организация', 'job', 'text', 'ООО "Компания"')}
               {renderField('Должность', 'position', 'text', 'Менеджер')}
             </div>
           </div>
 
           <div className={cls.formActions}>
-            <Button
-              type="submit"
-              variant="primary"
-              loading={loading}
-              disabled={loading || !isFormChanged()}
-              fullWidth
-            >
+            <Button type="submit" variant="primary" fullWidth disabled={!isFormChanged}>
               Сохранить изменения
             </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleCancel}
-              disabled={loading}
-              fullWidth
-            >
+            <Button type="button" variant="secondary" onClick={handleCancel} fullWidth>
               Отменить
             </Button>
           </div>
@@ -332,17 +381,25 @@ export const Profile: React.FC<ProfileProps> = ({
         renderViewMode()
       )}
 
-      {isEditing && Object.keys(errors).some(key => errors[key]) && (
+      <Button className={cls.exit} onClick={exitFrom}>
+        Выйти
+      </Button>
+
+      {((isEditing && Object.keys(errors).some((key) => errors[key])) || error) && (
         <div className={cls.formErrors}>
           <h4 className={cls.errorsTitle}>Ошибки в форме:</h4>
           <ul className={cls.errorsList}>
-            {Object.entries(errors)
-              .filter(([_, error]) => error)
-              .map(([field, error]) => (
-                <li key={field} className={cls.errorItem}>
-                  {error}
-                </li>
-              ))}
+            {error ? (
+              <li className={cls.errorItem}>{error}</li>
+            ) : (
+              Object.entries(errors)
+                .filter(([_, error]) => error)
+                .map(([field, error]) => (
+                  <li key={field} className={cls.errorItem}>
+                    {error}
+                  </li>
+                ))
+            )}
           </ul>
         </div>
       )}
