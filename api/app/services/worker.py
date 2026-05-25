@@ -23,15 +23,6 @@ async def process_scan_task():
                 await db.scans.update_one({ "_id": scan_id },{ "$set": { "status": ScanStatus.processing }})
                 await manager.send_message(scan_id, {"status": ScanStatus.processing})
 
-                #
-                # ТУТ БУДЕТ НЕЙРОНКА
-                #
-
-                #result_path = f"{OUTPUT_DIR}/{scan_id}.png"
-
-                # пока просто копируем
-                # исходное изображение
-
                 result = predict_scan(path)
 
                 await db.scans.update_one(
@@ -48,30 +39,14 @@ async def process_scan_task():
                 )
 
 
-                await asyncio.to_thread(
-                    shutil.copy,
-                    path,
-                    #result_path
-                    result
-                )
+                # await asyncio.to_thread(
+                #     shutil.copy,
+                #     path,
+                #     #result_path
+                #     result
+                # )
 
-                await asyncio.sleep(2)
-
-                await db.scans.update_one(
-                    {"_id": scan_id},
-                    {
-                        "$set": {
-                            "status":
-                                ScanStatus.done,
-                            "result":
-                                result_path,
-                            "result_desc":
-                                "Обработка завершена"
-                        }
-                    }
-                )
-
-                await manager.send_message(scan_id, {"status": ScanStatus.done, "result": f"/scans/result/{scan_id}"})
+                await manager.send_message(scan_id, {"status": ScanStatus.done, "result": result["result_path"]})
 
             except Exception as e:
                 await db.scans.update_one(

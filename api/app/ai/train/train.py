@@ -28,15 +28,17 @@ random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
-X_train = load_images("data/X_train")
+dataset_dir = os.path.join(os.path.dirname(__file__), "..", "datasets")
+X_train = load_images(os.path.join(dataset_dir, "X_train"))
 y_train = load_images(
-    "data/y_train",
+    os.path.join(dataset_dir, "Y_train"),
     grayscale=True
 )
 
-X_val = load_images("data/X_val")
+dataset_dir = os.path.join(os.path.dirname(__file__), "..", "datasets")
+X_val = load_images(os.path.join(dataset_dir, "X_val"))
 y_val = load_images(
-    "data/y_val",
+    os.path.join(dataset_dir, "Y_val"),
     grayscale=True
 )
 
@@ -88,7 +90,7 @@ model.fit(
     X_train,
     y_train,
     validation_data=(X_val, y_val),
-    epochs=50,
+    epochs=3,
     batch_size=16,
     callbacks=callbacks,
 )
