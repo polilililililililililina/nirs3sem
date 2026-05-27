@@ -2,7 +2,6 @@
 /app/__pycache__/
 
 storage/
-*.keras
 *.h5
 
 .env
