@@ -43,6 +43,8 @@ const initData = {
   avatar_url: '',
 }
 
+const API_HOST = process.env.API_HOST
+
 export const Profile: React.FC<ProfileProps> = ({
   title = 'Профиль пользователя',
   setIsAuthorized,
@@ -313,11 +315,7 @@ export const Profile: React.FC<ProfileProps> = ({
       <div className={cls.avatarBlock}>
         {formData.avatar_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`http://localhost:8000/${formData.avatar_url}`}
-            alt="avatar"
-            className={cls.avatar}
-          />
+          <img src={`${API_HOST}/${formData.avatar_url}`} alt="avatar" className={cls.avatar} />
         ) : (
           <div className={cls.emptyAvatar}>👤</div>
         )}
