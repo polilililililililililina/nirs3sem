@@ -6,6 +6,8 @@ import { FileUploader } from '@shared/ui/FileUploader'
 
 import cls from './Main.module.css'
 
+const SOCKET = process.env.SOCKET
+
 export const Main = () => {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +45,7 @@ export const Main = () => {
   useEffect(() => {
     if (!fileId) return
 
-    const socket = new WebSocket(`ws://localhost:8000/scans/ws/${fileId}`)
+    const socket = new WebSocket(`${SOCKET}/scans/ws/${fileId}`)
 
     socket.onopen = () => socket.send('connect')
 
@@ -78,7 +80,7 @@ export const Main = () => {
 
       <div className={cls.top}>
         <div className={cls.block}>
-          <h1>Анализ МРТ изображений</h1>
+          <h1 className={cls.white}>Анализ МРТ изображений</h1>
           <FileUploader
             acceptType="image"
             allowedExtensions={['.jpg', '.jpeg', '.png', '.gif', '.webp']}
@@ -89,7 +91,7 @@ export const Main = () => {
           />
         </div>
         <div className={cls.block}>
-          <h1>Результат обработки</h1>
+          <h1 className={cls.white}>Результат обработки</h1>
           <div className={cls.border}>
             {resultImage ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -110,34 +112,54 @@ export const Main = () => {
       </div>
 
       <div className={cls.bottom}>
-        <h2>
+        <h2 className={cls.white}>
           Загрузите МРТ-снимок и получите автоматическую сегментацию подозрительных областей. Наш
           алгоритм помогает врачам принимать решения быстрее и увереннее.
         </h2>
-        <h3>Как это работает</h3>
-        <p>
+        <h3 className={cls.white}>Как это работает</h3>
+        <h4 className={cls.white}>
           1. Загрузка изображения - Вы добавляете МРТ-снимок в формате изображения прямо в браузере.
-        </p>
-        <p>
+        </h4>
+        <h4 className={cls.white}>
           2. Анализ нейросетью - модель машинного обучения обрабатывает данные и находит возможные
           отклонения.
-        </p>
-        <p>3. Визуальный результат - Вы получаете изображение с подсвеченными зонами риска.</p>
-        <h3>Преимущества</h3>
+        </h4>
+        <h4 className={cls.white}>
+          3. Визуальный результат - Вы получаете изображение с подсвеченными зонами риска.
+        </h4>
+        <h3 className={cls.white}>Преимущества</h3>
         <ul>
-          <li>Поддержка медицинских MRI изображений</li>
-          <li>Автоматическая сегментация опухолей</li>
-          <li>Быстрая обработка</li>
-          <li>Удобный веб-интерфейс</li>
-          <li>Подходит для вспомогательной диагностики</li>
+          <li className={cls.white}>
+            <h4>Поддержка медицинских MRI изображений</h4>
+          </li>
+          <li className={cls.white}>
+            {' '}
+            <h4>Автоматическая сегментация опухолей</h4>
+          </li>
+          <li className={cls.white}>
+            {' '}
+            <h4>Быстрая обработка</h4>
+          </li>
+          <li className={cls.white}>
+            {' '}
+            <h4>Удобный веб-интерфейс</h4>
+          </li>
+          <li className={cls.white}>
+            {' '}
+            <h4>Подходит для вспомогательной диагностики</h4>
+          </li>
         </ul>
-        <p className={cls.bold}>
-          Результаты анализа носят вспомогательный характер и не заменяют медицинскую диагностику
-          врача.
+        <p className={`${cls.bold} ${cls.white}`}>
+          <h4>
+            Результаты анализа носят вспомогательный характер и не заменяют медицинскую диагностику
+            врача.
+          </h4>
         </p>
-        <p>
-          Современные технологии — в помощь медицинским решениям. Используйте искусственный
-          интеллект для более точной и быстрой оценки МРТ-снимков.
+        <p className={cls.white}>
+          <h4>
+            Современные технологии — в помощь медицинским решениям. Используйте искусственный
+            интеллект для более точной и быстрой оценки МРТ-снимков.
+          </h4>
         </p>
       </div>
     </>

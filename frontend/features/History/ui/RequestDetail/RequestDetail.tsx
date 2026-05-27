@@ -12,6 +12,8 @@ interface RequestDetailProps {
   onNewAnalysis?: () => void
 }
 
+const API_HOST = process.env.API_HOST
+
 export const RequestDetail: React.FC<RequestDetailProps> = ({
   request,
   onDownloadReport,
@@ -115,11 +117,7 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
             <div className={cls.imageWrapper}>
               {request.file_path ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={`http://localhost:8000/${request.file_path}`}
-                  alt=""
-                  className={cls.image}
-                />
+                <img src={`${API_HOST}/${request.file_path}`} alt="" className={cls.image} />
               ) : (
                 <div className={cls.imagePlaceholder}>
                   <span>Изображение недоступно</span>
@@ -133,7 +131,7 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
             <div className={cls.imageWrapper}>
               {request.result ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`http://localhost:8000/${request.result}`} alt="" className={cls.image} />
+                <img src={`${API_HOST}/${request.result}`} alt="" className={cls.image} />
               ) : (
                 <div className={cls.imagePlaceholder}>
                   <span>{request.status === 'processing' ? 'Обработка...' : 'Недоступно'}</span>

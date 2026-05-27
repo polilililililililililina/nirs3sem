@@ -16,12 +16,24 @@ ol {
   color: #5b729f;
 }
 
-body,
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  background: linear-gradient(to bottom, #5b729f, #a3c5f7);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 select {
   font-family: 'Montserrat', sans-serif;
   font-style: normal;
   font-weight: 400;
-  background: #5b729f;
+  background: linear-gradient(to bottom, #5b729f, #a3c5f7);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 input,

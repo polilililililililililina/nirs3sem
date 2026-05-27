@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 
 export const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: process.env.API_HOST,
 })
 
 // REQUEST INTERCEPTOR
@@ -35,7 +35,7 @@ api.interceptors.response.use(
           throw new Error('No refresh token')
         }
 
-        const response = await axios.post('http://localhost:8000/auth/refresh', {
+        const response = await axios.post(`${process.env.API_HOST}/auth/refresh`, {
           refresh_token,
         })
 

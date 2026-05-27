@@ -3,7 +3,10 @@ const nextConfig = {
   compiler: {
     emotion: true,
   },
-  env: {},
+  env: {
+    API_HOST: process.env.API_HOST,
+    SOCKET: process.env.SOCKET,
+  },
 }
 
 module.exports = nextConfig
