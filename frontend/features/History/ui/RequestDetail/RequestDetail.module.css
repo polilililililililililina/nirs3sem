@@ -254,6 +254,16 @@
   border-radius: 8px;
 }
 
+.anomalies {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  background: #ffeaa7;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+}
+
 .noAnomaliesIcon {
   font-size: 24px;
 }
@@ -281,37 +291,6 @@
 
 .descriptionParagraph:last-child {
   margin-bottom: 0;
-}
-
-.recommendationsSection {
-  padding: 24px;
-}
-
-.recommendationsList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.recommendationItem {
-  display: flex;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #e7f5ff;
-  border: 1px solid #d0ebff;
-  border-radius: 8px;
-}
-
-.recommendationNumber {
-  font-size: 14px;
-  font-weight: 600;
-  color: #339af0;
-}
-
-.recommendationText {
-  flex: 1;
-  font-size: 14px;
-  color: #495057;
 }
 
 .processingState,

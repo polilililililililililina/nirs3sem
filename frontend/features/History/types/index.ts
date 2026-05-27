@@ -10,6 +10,8 @@ export interface ScanItem {
   result?: string | null
   result_desc?: string | null
   created_at: string
+  confidence: number
+  tumor_detected: boolean
 }
 
 export interface Pagination {

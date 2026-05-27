@@ -6,6 +6,7 @@ from app.models.scan import ScanStatus
 from app.sockets.manager import manager
 from app.core.config import OUTPUT_DIR
 import os
+from datetime import datetime
 from app.ai.services.predict import predict_scan
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -33,7 +34,8 @@ async def process_scan_task():
                             "result": result["result_path"],
                             "confidence": result["confidence"],
                             "tumor_detected": result["tumor_detected"],
-                            "result_desc": "Обработка завершена"
+                            "result_desc": "Обработка завершена",
+                            "updated_at": datetime.utcnow(),
                         }
                     }
                 )

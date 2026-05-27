@@ -13,7 +13,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
-  maxVisiblePages = 5
+  maxVisiblePages = 5,
 }) => {
   if (totalPages <= 1) return null
 
@@ -40,7 +40,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       >
         ← Назад
       </button>
-      
+
       <div className={cls.pageNumbers}>
         {pageNumbers[0] && pageNumbers[0] > 1 && (
           <>
@@ -53,8 +53,8 @@ export const Pagination: React.FC<PaginationProps> = ({
             {pageNumbers[0] > 2 && <span className={cls.dots}>...</span>}
           </>
         )}
-        
-        {pageNumbers.map(page => (
+
+        {pageNumbers.map((page) => (
           <button
             key={page}
             className={`${cls.pageButton} ${currentPage === page ? cls.active : ''}`}
@@ -63,22 +63,22 @@ export const Pagination: React.FC<PaginationProps> = ({
             {page}
           </button>
         ))}
-        
-        {pageNumbers[pageNumbers.length - 1] < totalPages && (
-          <>
-            {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
-              <span className={cls.dots}>...</span>
-            )}
-            <button
-              className={`${cls.pageButton} ${currentPage === totalPages ? cls.active : ''}`}
-              onClick={() => onPageChange(totalPages)}
-            >
-              {totalPages}
-            </button>
-          </>
-        )}
+
+        {pageNumbers[pageNumbers.length - 1] ||
+          (0 < totalPages && (
+            <>
+              {pageNumbers[pageNumbers.length - 1] ||
+                (0 < totalPages - 1 && <span className={cls.dots}>...</span>)}
+              <button
+                className={`${cls.pageButton} ${currentPage === totalPages ? cls.active : ''}`}
+                onClick={() => onPageChange(totalPages)}
+              >
+                {totalPages}
+              </button>
+            </>
+          ))}
       </div>
-      
+
       <button
         className={`${cls.pageButton} ${cls.nextButton}`}
         onClick={() => onPageChange(currentPage + 1)}

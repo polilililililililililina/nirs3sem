@@ -228,7 +228,7 @@ export const Profile: React.FC<ProfileProps> = ({
 
   // Рендер информации только для просмотра
   const renderViewMode = () => {
-    const formatValue = (value?: string) => value || 'Не указано'
+    const formatValue = (value?: string) => value || ''
 
     return (
       <div className={cls.viewMode}>

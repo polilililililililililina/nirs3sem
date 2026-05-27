@@ -21,8 +21,9 @@ class Scan(BaseModel):
     result: Optional[str] = None
     result_desc: Optional[str] = None
     created_at: datetime
-    confidence: int
-    tumor_detected: bool
+    updated_at: Optional[datetime] = None
+    confidence: Optional[float] = None
+    tumor_detected: Optional[bool] = None
 
     model_config = {
         "populate_by_name": True

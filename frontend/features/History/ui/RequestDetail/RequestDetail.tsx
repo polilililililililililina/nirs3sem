@@ -147,14 +147,17 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
           <div className={cls.analysisResults}>
             <h4 className={cls.sectionTitle}>Результаты анализа</h4>
 
-            {/* {request.confidence && (
+            {request.confidence && (
               <div className={cls.confidenceSection}>
                 <div className={cls.confidenceHeader}>
                   <span className={cls.confidenceLabel}>Уверенность анализа:</span>
-                  <span className={cls.confidenceValue}>{request.confidence}%</span>
+                  <span className={cls.confidenceValue}>{request.confidence * 100}%</span>
                 </div>
                 <div className={cls.confidenceBar}>
-                  <div className={cls.confidenceFill} style={{ width: `${request.confidence}%` }} />
+                  <div
+                    className={cls.confidenceFill}
+                    style={{ width: `${request.confidence * 100}%` }}
+                  />
                 </div>
                 <div className={cls.confidenceScale}>
                   <span>Низкая</span>
@@ -162,19 +165,12 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
                   <span>Высокая</span>
                 </div>
               </div>
-            )} */}
+            )}
 
-            {/* {request.anomalies && request.anomalies.length > 0 ? (
-              <div className={cls.anomaliesSection}>
-                <h5 className={cls.subtitle}>Обнаруженные аномалии:</h5>
-                <div className={cls.anomaliesList}>
-                  {request.anomalies.map((anomaly, index) => (
-                    <div key={index} className={cls.anomalyItem}>
-                      <span className={cls.anomalyIcon}>⚠️</span>
-                      <span className={cls.anomalyText}>{anomaly}</span>
-                    </div>
-                  ))}
-                </div>
+            {request.tumor_detected ? (
+              <div className={cls.anomalies}>
+                <span className={cls.noAnomaliesIcon}>⚠️</span>
+                <h5 className={cls.anomalyText}>Обнаружены аномалии</h5>
               </div>
             ) : (
               <div className={cls.noAnomalies}>
@@ -183,7 +179,7 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
                   Аномалий не обнаружено. МРТ картина в пределах нормы.
                 </span>
               </div>
-            )} */}
+            )}
           </div>
 
           <div className={cls.descriptionSection}>

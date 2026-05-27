@@ -44,3 +44,14 @@
 .white {
   color: #ffffff;
 }
+
+@media (max-width: 992px) {
+  .top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .block {
+    align-items: center;
+  }
+}

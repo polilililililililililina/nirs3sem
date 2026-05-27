@@ -15,6 +15,7 @@ interface ITabs {
 export const Home = () => {
   const [activeTab, setActiveTab] = useState<string>('main')
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const tabs: ITabs[] = useMemo(() => {
     const t = [{ id: 'main', title: 'Главная' }]
@@ -39,12 +40,21 @@ export const Home = () => {
 
   return (
     <div className={cls.wrapper}>
-      <div className={cls.tabs}>
+      <div className={cls.burger} onClick={() => setIsMenuOpen(true)}>
+        ☰
+      </div>
+
+      {isMenuOpen && <div className={cls.overlay} onClick={() => setIsMenuOpen(false)} />}
+
+      <div className={`${cls.sidebar} ${isMenuOpen ? cls.open : ''}`}>
         {tabs.map((tab) => (
           <div
             key={tab.id}
             className={activeTab === tab.id ? cls.activeTab : cls.tab}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id)
+              setIsMenuOpen(false)
+            }}
           >
             <p className={cls.tabName}>{tab.title}</p>
           </div>

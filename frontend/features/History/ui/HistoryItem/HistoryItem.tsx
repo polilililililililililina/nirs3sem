@@ -59,10 +59,12 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ request, isSelected, o
           )}
         </div>
 
-        {/* <div className={cls.anomalies}>
+        <div className={cls.anomalies}>
           <span className={cls.anomaliesLabel}>Аномалии:</span>
-          <span className={cls.anomaliesValue}>{getAnomaliesSummary(request. || [])}</span>
-        </div> */}
+          <span className={cls.anomaliesValue}>
+            {request.tumor_detected ? 'Выявлены' : 'Не выявлены'}
+          </span>
+        </div>
       </div>
     </div>
   )

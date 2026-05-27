@@ -31,8 +31,8 @@
 
 .pageButton.active {
   color: white;
-  background: #339af0;
-  border-color: #339af0;
+  background: #5b729f;
+  border-color: #5b729f;
 }
 
 .pageButton:disabled {

@@ -8,7 +8,9 @@ def scan_serializer(scan) -> dict:
         "result": scan.get("result"),
         "is_guest": scan.get("is_guest", False),
         "result_desc": scan.get("result_desc"),
-        "created_at": scan["created_at"]
+        "created_at": scan["created_at"],
+        "confidence": scan["confidence"],
+        "tumor_detected": scan["tumor_detected"]
     }
 
 

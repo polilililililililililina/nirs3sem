@@ -70,11 +70,11 @@ export const History: React.FC<IProps> = (props) => {
   }, [currentPage, filter, search])
 
   return (
-    <div className={cls.historyPage}>
+    <>
       <header className={cls.pageHeader}>
         <h1 className={cls.pageTitle}>История анализов МРТ</h1>
 
-        <Button variant="primary" onClick={() => setActiveTab('main')}>
+        <Button variant="primary" onClick={() => setActiveTab('main')} className={cls.btn}>
           Новый анализ
         </Button>
       </header>
@@ -157,6 +157,6 @@ export const History: React.FC<IProps> = (props) => {
       </div>
 
       {loading && <p>Загрузка...</p>}
-    </div>
+    </>
   )
 }
