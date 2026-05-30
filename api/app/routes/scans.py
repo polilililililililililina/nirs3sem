@@ -60,9 +60,11 @@ async def get_scans(
 ):
     skips = (page - 1) * limit
 
-    query = {
-        "user_id": user["_id"]
-    }
+
+    if user.role == "user":
+        query = {
+            "owner_id": user["_id"]
+        }
 
     # Фильтр по статусу
     if status:

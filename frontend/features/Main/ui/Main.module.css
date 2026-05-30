@@ -55,3 +55,12 @@
     align-items: center;
   }
 }
+
+.warning {
+  padding: 8px 12px;
+  font-weight: 700;
+  color: #856404;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+}

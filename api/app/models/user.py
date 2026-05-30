@@ -2,6 +2,13 @@ from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime, date
 from typing import Optional
 import re
+from enum import Enum
+
+
+class UserRole(str, Enum):
+    user = "user"
+    doctor = "doctor"
+    admin = "admin"
 
 
 # Полная модель пользователя (БД)
@@ -10,6 +17,7 @@ class User(BaseModel):
     email: EmailStr
     password: str
     name: str
+    role: UserRole = UserRole.user
     surname: Optional[str] = None
     middlename: Optional[str] = None
     birthday: Optional[str] = None
@@ -19,6 +27,7 @@ class User(BaseModel):
     password_reset_token: Optional[str] = None
     password_reset_expires: Optional[datetime] = None
     avatar_url: Optional[str] = None
+    clinic_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

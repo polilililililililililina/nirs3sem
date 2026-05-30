@@ -23,6 +23,7 @@ def user_serializer(user) -> dict:
         "_id": str(user["_id"]),
         "email": user["email"],
         "name": user.get("name"),
+        "role": user.get("role"),
         "surname": user.get("surname"),
         "middlename": user.get("middlename"),
         "birthday": user.get("birthday"),
@@ -30,6 +31,8 @@ def user_serializer(user) -> dict:
         "position": user.get("position"),
         "phone": user.get("phone"),
         "avatar_url": user.get("avatar_url"),
+        "clinic_id": user.get("clinic_id"),
+        "clinic_name": user.get("clinic_name"),
         "created_at": user["created_at"],
         "updated_at": user["updated_at"]
     }

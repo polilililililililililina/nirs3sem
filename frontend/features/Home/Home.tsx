@@ -61,6 +61,18 @@ export const Home = () => {
         ))}
       </div>
 
+      <div className={cls.tabs}>
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            className={activeTab === tab.id ? cls.activeTab : cls.tab}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <p className={cls.tabName}>{tab.title}</p>
+          </div>
+        ))}
+      </div>
+
       <div className={cls.content}>
         {activeTab === 'main' && <Main />}
         {/* {activeTab === 'articles' && <Articles />} */}

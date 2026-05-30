@@ -23,6 +23,7 @@ async def register(data: RegisterSchema):
             "email": data.email,
             "password": hash_password(data.password),
             "name": data.name,
+            "role": "user",
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
@@ -42,7 +43,7 @@ async def register(data: RegisterSchema):
 async def login(data: LoginSchema):
     user = await db.users.find_one({"email": data.email})
     if not user or not verify_password(data.password, user["password"]):
-        raise HTTPException(401, "Неверный адрес электронной почты или пароль")
+        raise HTTPException(400, "Неверный адрес электронной почты или пароль")
 
     try:
         access_token = create_access_token({"_id": user["_id"], "email": user["email"]})

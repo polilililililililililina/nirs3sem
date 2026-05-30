@@ -16,14 +16,18 @@ class Scan(BaseModel):
     filename: str
     file_path: str
     status: ScanStatus
-    user_id: Optional[str] = None
+    owner_id: Optional[str] = None
+    patient_name: Optional[str] = None
     is_guest: bool
-    result: Optional[str] = None
-    result_desc: Optional[str] = None
+    ai_conclusion_path: Optional[str] = None
+    ai_desc: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     confidence: Optional[float] = None
     tumor_detected: Optional[bool] = None
+    clinic_id: Optional[str] = None
+    doctor_comment: Optional[str] = None
+    expert_conclusion: Optional[str] = None
 
     model_config = {
         "populate_by_name": True
