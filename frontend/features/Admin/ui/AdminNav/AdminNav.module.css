@@ -1,0 +1,27 @@
+.nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.link,
+.linkActive {
+  text-decoration: none;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+}
+
+.link {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.linkActive {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.28);
+}

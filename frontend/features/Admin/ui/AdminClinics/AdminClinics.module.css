@@ -1,0 +1,120 @@
+.page {
+  padding-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.form {
+  padding: 20px;
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.formTitle {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input,
+.textarea {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.cardTitle {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.cardMeta {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #495057;
+}
+
+.cardDesc {
+  margin: 0;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.cardActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #868e96;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.error {
+  margin-bottom: 12px;
+  color: red;
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .cardActions {
+    width: 100%;
+  }
+}

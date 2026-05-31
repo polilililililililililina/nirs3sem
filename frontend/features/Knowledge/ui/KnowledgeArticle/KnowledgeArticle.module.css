@@ -1,0 +1,53 @@
+.page {
+  padding: 20px;
+  color: #fff;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 28px;
+  color: #fff;
+}
+
+.body {
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+}
+
+.sourceLink {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #fff;
+  text-decoration: underline;
+}
+
+.error {
+  color: red;
+}

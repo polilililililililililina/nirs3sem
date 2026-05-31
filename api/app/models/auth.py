@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
 
 
 class RegisterSchema(BaseModel):
-    email: EmailStr
-    password: str
-    name: str
+    email: EmailStr = Field(description="Email пользователя", examples=["user@example.com"])
+    password: str = Field(description="Пароль (мин. 8 символов, буква и цифра)", examples=["Password1"])
+    name: str = Field(description="Имя", examples=["Иван"])
 
     @field_validator("password")
     @classmethod
@@ -29,8 +29,8 @@ class RegisterSchema(BaseModel):
 
 
 class LoginSchema(BaseModel):
-    email: EmailStr
-    password: str
+    email: EmailStr = Field(description="Email", examples=["user@example.com"])
+    password: str = Field(description="Пароль")
 
     @field_validator("password")
     @classmethod
@@ -70,3 +70,7 @@ class ResetPasswordSchema(BaseModel):
             )
 
         return value
+
+
+class RefreshTokenSchema(BaseModel):
+    refresh_token: str

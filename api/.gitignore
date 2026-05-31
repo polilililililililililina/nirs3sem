@@ -1,5 +1,7 @@
 .venv/
-/app/__pycache__/
+__pycache__/
+**/__pycache__/
+/app/core/__pycache__/
 
 storage/
 *.h5
@@ -7,4 +9,4 @@ storage/
 .env
 
 /app/ai/datasets/
-/app/ai/__pycache__/
+

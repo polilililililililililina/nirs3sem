@@ -1,28 +1,29 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { useRouter } from 'next/router'
 
 import { Pagination, ScanItem } from '@features/History/types'
 
 import { api } from '@shared/api/api'
 import { getErrorMessage } from '@shared/api/getErrorMessage'
 import { Button } from '@shared/ui/Button'
+import { PageLoader } from '@shared/ui/Loader'
 
 import { HistoryList } from '../HistoryList/HistoryList'
 import { RequestDetail } from '../RequestDetail/RequestDetail'
 
 import cls from './History.module.css'
 
-interface IProps {
-  setActiveTab: Dispatch<SetStateAction<string>>
-}
-
-export const History: React.FC<IProps> = (props) => {
-  const { setActiveTab } = props
+export const History: React.FC = () => {
+  const router = useRouter()
 
   const [requests, setRequests] = useState<ScanItem[]>([])
   const [selectedRequest, setSelectedRequest] = useState<ScanItem | null>(null)
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState<'all' | 'queued' | 'processing' | 'done' | 'error'>('all')
   const [search, setSearch] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState<Pagination>()
   const [currentPage, setCurrentPage] = useState(1)
@@ -59,6 +60,8 @@ export const History: React.FC<IProps> = (props) => {
           limit: 10,
           status: filter === 'all' ? undefined : filter,
           search: search || undefined,
+          date_from: dateFrom || undefined,
+          date_to: dateTo || undefined,
         },
       })
       .then(({ data }) => {
@@ -67,14 +70,14 @@ export const History: React.FC<IProps> = (props) => {
       })
       .catch((e) => setError(getErrorMessage(e)))
       .finally(() => setLoading(false))
-  }, [currentPage, filter, search])
+  }, [currentPage, filter, search, dateFrom, dateTo])
 
   return (
     <>
       <header className={cls.pageHeader}>
         <h1 className={cls.pageTitle}>История анализов МРТ</h1>
 
-        <Button variant="primary" onClick={() => setActiveTab('main')} className={cls.btn}>
+        <Button variant="primary" onClick={() => router.push('/')} className={cls.btn}>
           Новый анализ
         </Button>
       </header>
@@ -125,10 +128,42 @@ export const History: React.FC<IProps> = (props) => {
             placeholder="Поиск..."
             className={cls.searchInput}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setCurrentPage(1)
+              setSearch(e.target.value)
+            }}
           />
         </div>
+
+        <div className={cls.dateFilters}>
+          <label className={cls.dateLabel}>
+            С
+            <input
+              type="date"
+              className={cls.dateInput}
+              value={dateFrom}
+              onChange={(e) => {
+                setCurrentPage(1)
+                setDateFrom(e.target.value)
+              }}
+            />
+          </label>
+          <label className={cls.dateLabel}>
+            По
+            <input
+              type="date"
+              className={cls.dateInput}
+              value={dateTo}
+              onChange={(e) => {
+                setCurrentPage(1)
+                setDateTo(e.target.value)
+              }}
+            />
+          </label>
+        </div>
       </div>
+
+      {loading && requests.length === 0 && <PageLoader />}
 
       <div className={cls.contentLayout}>
         <div className={cls.listColumn}>
@@ -144,7 +179,7 @@ export const History: React.FC<IProps> = (props) => {
         </div>
 
         <div className={cls.detailColumn}>
-          <RequestDetail request={selectedRequest} />
+          <RequestDetail request={selectedRequest} onNewAnalysis={() => router.push('/')} />
 
           {selectedRequest && (
             <div className={cls.detailActions}>
@@ -155,8 +190,6 @@ export const History: React.FC<IProps> = (props) => {
           )}
         </div>
       </div>
-
-      {loading && <p>Загрузка...</p>}
     </>
   )
 }

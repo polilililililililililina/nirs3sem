@@ -1,4 +1,6 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
+
+import { useRouter } from 'next/router'
 
 import { api } from '@shared/api/api'
 import { getErrorMessage } from '@shared/api/getErrorMessage'
@@ -12,12 +14,9 @@ interface IResponse {
   refresh_token: string
 }
 
-interface IProps {
-  setIsAuthorized: Dispatch<SetStateAction<boolean>>
-  setActiveTab: Dispatch<SetStateAction<string>>
-}
+export const AuthForm = () => {
+  const router = useRouter()
 
-export const AuthForm = ({ setIsAuthorized, setActiveTab }: IProps) => {
   const [type, setType] = useState<'login' | 'register' | 'forgot'>('login')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -43,8 +42,7 @@ export const AuthForm = ({ setIsAuthorized, setActiveTab }: IProps) => {
         setName('')
         setPassword('')
 
-        setIsAuthorized(true)
-        setActiveTab('main')
+        router.reload()
       })
       .catch((e) => setError(getErrorMessage(e)))
       .finally(() => setIsLoading(false))

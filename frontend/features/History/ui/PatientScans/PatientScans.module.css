@@ -1,0 +1,89 @@
+.page {
+  padding-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 16px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.error {
+  color: red;
+}
+
+.profile,
+.scans {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.sectionTitle {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #868e96;
+}
+
+.scanList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scanCard {
+  display: block;
+  padding: 16px;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.scanCard:hover {
+  border-color: #5b729f;
+}
+
+.scanHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.status {
+  font-weight: 500;
+  color: #495057;
+}
+
+.scanDesc {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.scanMeta {
+  margin: 0;
+  font-size: 13px;
+  color: #495057;
+}

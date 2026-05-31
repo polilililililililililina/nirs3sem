@@ -1,0 +1,95 @@
+.page {
+  padding: 20px;
+  color: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  color: #fff;
+}
+
+.toolbar {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tag {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #fff;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid transparent;
+  border-radius: 20px;
+}
+
+.tagActive {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  padding: 16px;
+  text-decoration: none;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.itemTitle {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #5b729f;
+}
+
+.itemTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.itemTag {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: rgba(36, 36, 36, 0.12);
+  border-radius: 12px;
+}
+
+.itemMeta {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.error {
+  color: #ffb3b3;
+}

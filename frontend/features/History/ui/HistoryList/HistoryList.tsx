@@ -123,7 +123,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   </div>
 
                   <div className={cls.itemFooter}>
-                    <span className={cls.viewDetails}>Подробнее →</span>
+                    <span className={cls.viewDetails}>Подробнее</span>
                   </div>
                 </div>
               ))}

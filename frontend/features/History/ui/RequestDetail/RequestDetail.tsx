@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+
+import { useRouter } from 'next/router'
 
 import { ScanItem } from '@features/History/types'
+import { SuggestedArticles } from '@features/Knowledge/ui/SuggestedArticles/SuggestedArticles'
 
+import { api } from '@shared/api/api'
 import { Button } from '@shared/ui/Button'
 
 import cls from './RequestDetail.module.css'
@@ -12,13 +16,106 @@ interface RequestDetailProps {
   onNewAnalysis?: () => void
 }
 
-const API_HOST = process.env.API_HOST
+type ResultView = 'mask' | 'heatmap' | 'overlay'
 
 export const RequestDetail: React.FC<RequestDetailProps> = ({
   request,
   onDownloadReport,
   onNewAnalysis,
 }) => {
+  const router = useRouter()
+  const [inputImageUrl, setInputImageUrl] = useState<string | null>(null)
+  const [resultView, setResultView] = useState<ResultView>('mask')
+  const [images, setImages] = useState({
+    mask: null as string | null,
+    heatmap: null as string | null,
+    overlay: null as string | null,
+  })
+
+  useEffect(() => {
+    if (!request?._id) {
+      setInputImageUrl(null)
+      setImages({ mask: null, heatmap: null, overlay: null })
+      return
+    }
+
+    let inputUrl: string | null = null
+    const resultUrls = {
+      mask: null as string | null,
+      heatmap: null as string | null,
+      overlay: null as string | null,
+    }
+    let cancelled = false
+
+    const loadImages = async () => {
+      try {
+        const inputResponse = await api.get(`/scans/input/${request._id}`, {
+          responseType: 'blob',
+        })
+
+        if (!cancelled) {
+          inputUrl = URL.createObjectURL(inputResponse.data)
+          setInputImageUrl(inputUrl)
+        }
+      } catch {
+        if (!cancelled) setInputImageUrl(null)
+      }
+
+      if (request.status === 'done' && request.result) {
+        try {
+          const maskResponse = await api.get(`/scans/result/${request._id}`, {
+            responseType: 'blob',
+          })
+          if (!cancelled) {
+            resultUrls.mask = URL.createObjectURL(maskResponse.data)
+          }
+        } catch {
+          //
+        }
+
+        try {
+          const overlayResponse = await api.get(`/scans/heatmap/${request._id}?view=overlay`, {
+            responseType: 'blob',
+          })
+          if (!cancelled) {
+            resultUrls.overlay = URL.createObjectURL(overlayResponse.data)
+          }
+        } catch {
+          //
+        }
+
+        try {
+          const heatmapResponse = await api.get(`/scans/heatmap/${request._id}?view=raw`, {
+            responseType: 'blob',
+          })
+          if (!cancelled) {
+            resultUrls.heatmap = URL.createObjectURL(heatmapResponse.data)
+          }
+        } catch {
+          //
+        }
+
+        if (!cancelled) {
+          setImages(resultUrls)
+        }
+      } else if (!cancelled) {
+        setImages({ mask: null, heatmap: null, overlay: null })
+      }
+    }
+
+    loadImages()
+
+    return () => {
+      cancelled = true
+      if (inputUrl) URL.revokeObjectURL(inputUrl)
+      Object.values(resultUrls).forEach((url) => {
+        if (url) URL.revokeObjectURL(url)
+      })
+    }
+  }, [request?._id, request?.status, request?.result])
+
+  const activeResultImage = useMemo(() => images[resultView], [images, resultView])
+
   if (!request) {
     return (
       <div className={cls.emptyDetail}>
@@ -77,6 +174,8 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
     }
   }
 
+  const hasConfidence = request.confidence !== undefined && request.confidence !== null
+
   return (
     <div className={cls.requestDetail}>
       <div className={cls.detailHeader}>
@@ -91,6 +190,16 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
         </div>
 
         <div className={cls.headerActions}>
+          {request.status === 'done' && (
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={() => router.push(`/compare?scan_id=${request._id}`)}
+              icon="🔍"
+            >
+              Похожие случаи
+            </Button>
+          )}
           {request.status === 'done' && onDownloadReport && (
             <Button
               variant="primary"
@@ -113,11 +222,11 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
         <h4 className={cls.sectionTitle}>МРТ изображения</h4>
         <div className={cls.imagesGrid}>
           <div className={cls.imageContainer}>
-            <div className={cls.imageLabel}>Исходное изображение</div>
+            <div className={`${cls.imageLabel} ${cls.first}`}>Исходное изображение</div>
             <div className={cls.imageWrapper}>
-              {request.file_path ? (
+              {inputImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`${API_HOST}/${request.file_path}`} alt="" className={cls.image} />
+                <img src={inputImageUrl} alt="" className={cls.image} />
               ) : (
                 <div className={cls.imagePlaceholder}>
                   <span>Изображение недоступно</span>
@@ -127,11 +236,39 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
           </div>
 
           <div className={cls.imageContainer}>
-            <div className={cls.imageLabel}>Обработанное изображение</div>
+            <div className={cls.imageLabel}>Результат / Grad-CAM</div>
+            {request.status === 'done' && (
+              <div className={cls.viewToggle}>
+                <button
+                  type="button"
+                  className={resultView === 'mask' ? cls.viewActive : cls.viewButton}
+                  onClick={() => setResultView('mask')}
+                  disabled={!images.mask}
+                >
+                  Маска
+                </button>
+                <button
+                  type="button"
+                  className={resultView === 'heatmap' ? cls.viewActive : cls.viewButton}
+                  onClick={() => setResultView('heatmap')}
+                  disabled={!images.heatmap}
+                >
+                  Heatmap
+                </button>
+                <button
+                  type="button"
+                  className={resultView === 'overlay' ? cls.viewActive : cls.viewButton}
+                  onClick={() => setResultView('overlay')}
+                  disabled={!images.overlay}
+                >
+                  Overlay
+                </button>
+              </div>
+            )}
             <div className={cls.imageWrapper}>
-              {request.result ? (
+              {activeResultImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`${API_HOST}/${request.result}`} alt="" className={cls.image} />
+                <img src={activeResultImage} alt="" className={cls.image} />
               ) : (
                 <div className={cls.imagePlaceholder}>
                   <span>{request.status === 'processing' ? 'Обработка...' : 'Недоступно'}</span>
@@ -147,16 +284,16 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
           <div className={cls.analysisResults}>
             <h4 className={cls.sectionTitle}>Результаты анализа</h4>
 
-            {request.confidence && (
+            {hasConfidence && (
               <div className={cls.confidenceSection}>
                 <div className={cls.confidenceHeader}>
                   <span className={cls.confidenceLabel}>Уверенность анализа:</span>
-                  <span className={cls.confidenceValue}>{request.confidence * 100}%</span>
+                  <span className={cls.confidenceValue}>{request.confidence! * 100}%</span>
                 </div>
                 <div className={cls.confidenceBar}>
                   <div
                     className={cls.confidenceFill}
-                    style={{ width: `${request.confidence * 100}%` }}
+                    style={{ width: `${request.confidence! * 100}%` }}
                   />
                 </div>
                 <div className={cls.confidenceScale}>
@@ -170,16 +307,20 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
             {request.tumor_detected ? (
               <div className={cls.anomalies}>
                 <span className={cls.noAnomaliesIcon}>⚠️</span>
-                <h5 className={cls.anomalyText}>Обнаружены аномалии</h5>
+                <h5 className={cls.anomalyText}>Обнаружены признаки возможной аномалии</h5>
               </div>
             ) : (
               <div className={cls.noAnomalies}>
                 <span className={cls.noAnomaliesIcon}>✅</span>
                 <span className={cls.noAnomaliesText}>
-                  Аномалий не обнаружено. МРТ картина в пределах нормы.
+                  Признаков аномалии не выявлено. Результат носит вспомогательный характер.
                 </span>
               </div>
             )}
+
+            <p className={cls.disclaimer}>
+              ⚠️ Результат носит вспомогательный характер и не является медицинским диагнозом.
+            </p>
           </div>
 
           <div className={cls.descriptionSection}>
@@ -193,6 +334,10 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
             </div>
           </div>
         </>
+      )}
+
+      {request.status === 'done' && (
+        <SuggestedArticles scanId={request._id} className={cls.suggestedArticles} />
       )}
 
       {request.status === 'processing' && (
@@ -225,7 +370,8 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
           <div className={cls.failedIcon}>❌</div>
           <h4 className={cls.failedTitle}>Ошибка обработки</h4>
           <p className={cls.failedText}>
-            При обработке изображения произошла ошибка. Попробуйте загрузить изображение снова.
+            {request.result_desc ||
+              'При обработке изображения произошла ошибка. Попробуйте загрузить изображение снова.'}
           </p>
         </div>
       )}

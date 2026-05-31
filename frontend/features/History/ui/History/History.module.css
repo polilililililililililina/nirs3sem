@@ -18,6 +18,8 @@
 
 .filters {
   display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
   padding: 16px;
@@ -62,6 +64,27 @@
 .searchInput {
   flex: 1;
   padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.dateFilters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.dateLabel {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  color: #495057;
+}
+
+.dateInput {
+  padding: 8px 10px;
   font-size: 14px;
   border: 1px solid #dee2e6;
   border-radius: 6px;

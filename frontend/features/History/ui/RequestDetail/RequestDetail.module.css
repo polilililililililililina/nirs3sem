@@ -133,6 +133,10 @@
   color: #495057;
 }
 
+.first {
+  padding-bottom: 40px;
+}
+
 .imageWrapper {
   aspect-ratio: 1;
   overflow: hidden;
@@ -241,6 +245,35 @@
 .anomalyText {
   font-size: 14px;
   font-weight: 500;
+  color: #856404;
+}
+
+.viewToggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.viewButton {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.viewActive {
+  composes: viewButton;
+  background: #dee2e6;
+}
+
+.disclaimer {
+  margin-top: 12px;
+  font-size: 13px;
   color: #856404;
 }
 
@@ -376,4 +409,8 @@
   .headerActions button {
     flex: 1;
   }
+}
+
+.suggestedArticles {
+  margin: 0 24px 24px;
 }

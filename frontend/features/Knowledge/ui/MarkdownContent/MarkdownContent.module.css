@@ -1,0 +1,46 @@
+.markdown {
+  line-height: 1.7;
+  color: #5b729f;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  margin: 1.2em 0 0.6em;
+}
+
+.markdown p {
+  margin: 0 0 1em;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+}
+
+.markdown a {
+  color: #5b729f;
+  text-decoration: underline;
+}
+
+.markdown code {
+  padding: 2px 6px;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+}
+
+.markdown pre {
+  padding: 12px;
+  overflow-x: auto;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+
+.markdown blockquote {
+  padding-left: 12px;
+  margin: 0 0 1em;
+  color: #666;
+  border-left: 3px solid #dee2e6;
+}

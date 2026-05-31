@@ -38,7 +38,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        ← Назад
+        Назад
       </button>
 
       <div className={cls.pageNumbers}>
@@ -84,7 +84,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        Вперед →
+        Вперед
       </button>
     </div>
   )

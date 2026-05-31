@@ -1,11 +1,7 @@
-import { FC } from "react"
+import { Main } from '@features/Main'
 
-import { Home } from "@features/Home"
- 
-const Main: FC = () => {
-
-  return <Home />
+const HomePage = () => {
+  return <Main />
 }
 
-export default Main
- 
+export default HomePage

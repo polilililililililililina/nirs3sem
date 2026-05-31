@@ -1,0 +1,96 @@
+.loader {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sm .scanner {
+  width: 36px;
+  height: 36px;
+}
+
+.md .scanner {
+  width: 52px;
+  height: 52px;
+}
+
+.lg .scanner {
+  width: 72px;
+  height: 72px;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(91, 114, 159, 0.2);
+  border-top-color: #5b729f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.core {
+  width: 42%;
+  height: 42%;
+  background: radial-gradient(circle, rgba(91, 114, 159, 0.35) 0%, rgba(91, 114, 159, 0.05) 70%);
+  border: 2px solid rgba(91, 114, 159, 0.45);
+  border-radius: 50%;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.beam {
+  position: absolute;
+  top: 8%;
+  left: 12%;
+  width: 76%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(91, 114, 159, 0.15), #5b729f, rgba(91, 114, 159, 0.15), transparent);
+  border-radius: 999px;
+  animation: sweep 1.8s ease-in-out infinite;
+}
+
+.label {
+  font-size: 14px;
+  color: #495057;
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  0%,
+  100% {
+    top: 12%;
+    opacity: 0.35;
+  }
+
+  50% {
+    top: 78%;
+    opacity: 1;
+  }
+}

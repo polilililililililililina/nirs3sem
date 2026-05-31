@@ -1,0 +1,112 @@
+.page {
+  padding-bottom: 32px;
+}
+
+.header {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.error {
+  margin-bottom: 12px;
+  color: red;
+}
+
+.doctorPanel {
+  padding: 24px;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.sectionTitle {
+  margin: 24px 0 12px;
+  font-size: 18px;
+}
+
+.sectionTitle:first-child {
+  margin-top: 0;
+}
+
+.verifyRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.verifyActions {
+  display: flex;
+  gap: 8px;
+}
+
+.verifiedBadge,
+.rejectedBadge,
+.pendingBadge {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pendingBadge {
+  color: #868e96;
+}
+
+.commentList {
+  padding: 0;
+  margin: 0 0 16px;
+  list-style: none;
+}
+
+.commentItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.commentItem p {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+.commentMeta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.emptyText {
+  color: #868e96;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.conclusionBox {
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.conclusionBox p {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}

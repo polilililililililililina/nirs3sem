@@ -21,7 +21,6 @@ class User(BaseModel):
     surname: Optional[str] = None
     middlename: Optional[str] = None
     birthday: Optional[str] = None
-    job: Optional[str] = None
     position: Optional[str] = None
     phone: Optional[str] = None
     password_reset_token: Optional[str] = None
@@ -37,13 +36,15 @@ class UserResponse(BaseModel):
     _id: str
     email: EmailStr
     name: str
+    role: UserRole = UserRole.user
     surname: Optional[str] = None
     middlename: Optional[str] = None
     birthday: Optional[str] = None
-    job: Optional[str] = None
     position: Optional[str] = None
     phone: Optional[str] = None
     avatar_url: Optional[str] = None
+    clinic_id: Optional[str] = None
+    clinic_name: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -54,9 +55,9 @@ class UpdateUserSchema(BaseModel):
     surname: Optional[str] = None
     middlename: Optional[str] = None
     birthday: Optional[str] = None
-    job: Optional[str] = None
     position: Optional[str] = None
     phone: Optional[str] = None
+    clinic_id: Optional[str] = None
 
     @field_validator("phone")
     @classmethod

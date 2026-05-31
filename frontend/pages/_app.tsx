@@ -1,6 +1,8 @@
 import { AppProps } from 'next/app'
 import Head from 'next/head'
 
+import { Layout } from '@shared/ui/Layout'
+
 import '../styles/index.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -8,10 +10,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>MRI Analyzer</title>
-
         <meta name="description" content="Сервис анализа МРТ изображений" />
       </Head>
-      <Component {...pageProps} />
+
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </>
   )
 }

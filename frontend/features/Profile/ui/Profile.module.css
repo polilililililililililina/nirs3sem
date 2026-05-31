@@ -252,6 +252,21 @@
   border-radius: 50%;
 }
 
+.selectLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
 .error {
   margin-bottom: 12px;
   color: red;

@@ -1,0 +1,121 @@
+.page {
+  padding-bottom: 32px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.subtitle {
+  margin: 0;
+  color: #fff;
+}
+
+.notice,
+.selector,
+.compareGrid {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.error {
+  color: red;
+}
+
+.sectionTitle {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.scanOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 8px;
+}
+
+.optionSelected {
+  border-color: #5b729f;
+  background: #eef2f8;
+}
+
+.similarTag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5b729f;
+}
+
+.compareGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.compareCard {
+  padding: 16px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.compareCard h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.imageWrap {
+  margin-bottom: 12px;
+}
+
+.image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  color: #868e96;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.meta {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #495057;
+}
+
+.desc {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #868e96;
+}

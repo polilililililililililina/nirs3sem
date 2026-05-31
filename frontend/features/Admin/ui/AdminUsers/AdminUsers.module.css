@@ -1,0 +1,70 @@
+.page {
+  padding-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.toolbar {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.table th {
+  font-weight: 600;
+  color: #495057;
+  background: #f8f9fa;
+}
+
+.roleSelect {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #868e96;
+}
+
+.error {
+  margin-bottom: 12px;
+  color: red;
+}

@@ -1,7 +1,9 @@
-from fastapi import Header, HTTPException
+from typing import Callable, Optional
+
+from fastapi import Depends, Header, HTTPException, status
+
 from app.core.security import decode_token
 from app.db.mongo import db
-from typing import Optional
 
 
 async def get_current_user(authorization: str = Header(...)):
@@ -23,7 +25,6 @@ async def get_current_user(authorization: str = Header(...)):
 
 
 async def get_current_user_optional(authorization: Optional[str] = Header(None)):
-
     if not authorization:
         return None
 
@@ -31,10 +32,35 @@ async def get_current_user_optional(authorization: Optional[str] = Header(None))
         return None
 
     token = authorization.split(" ")[1]
+    payload = decode_token(token)
+
+    if not payload:
+        return None
+
+    user = await db.users.find_one({"email": payload["email"]})
+
+    if not user:
+        return None
+
+    return user
+
+
+async def get_user_from_token(token: Optional[str]) -> Optional[dict]:
+    if not token:
+        return None
 
     payload = decode_token(token)
 
     if not payload:
         return None
 
-    return payload
+    return await db.users.find_one({"email": payload["email"]})
+
+
+def require_role(*roles: str) -> Callable:
+    async def role_checker(user=Depends(get_current_user)):
+        if user.get("role") not in roles:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "Недостаточно прав")
+        return user
+
+    return role_checker

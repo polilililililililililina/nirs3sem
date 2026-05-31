@@ -5,29 +5,29 @@ from enum import Enum
 
 
 class ScanStatus(str, Enum):
+    queued = "queued"
     processing = "processing"
     done = "done"
     error = "error"
-    queued = "queued"
 
 
 class Scan(BaseModel):
-    id: str = Field(alias="_id")
-    filename: str
-    file_path: str
-    status: ScanStatus
-    owner_id: Optional[str] = None
-    patient_name: Optional[str] = None
-    is_guest: bool
-    ai_conclusion_path: Optional[str] = None
-    ai_desc: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    confidence: Optional[float] = None
-    tumor_detected: Optional[bool] = None
-    clinic_id: Optional[str] = None
-    doctor_comment: Optional[str] = None
-    expert_conclusion: Optional[str] = None
+    id: str = Field(alias="_id", description="UUID анализа")
+    filename: str = Field(description="Имя загруженного файла")
+    file_path: str = Field(description="Путь к исходному изображению на сервере")
+    status: ScanStatus = Field(description="Статус обработки: queued, processing, done, error")
+    user_id: Optional[str] = Field(default=None, description="ID владельца (null для гостя)")
+    is_guest: bool = Field(description="Гостевая загрузка без авторизации")
+    result: Optional[str] = Field(default=None, description="Путь к маске сегментации")
+    result_desc: Optional[str] = Field(default=None, description="Текстовое описание результата")
+    source_type: Optional[str] = Field(default="image", description="image или dicom")
+    heatmap_path: Optional[str] = Field(default=None, description="Grad-CAM overlay")
+    heatmap_raw_path: Optional[str] = Field(default=None, description="Grad-CAM heatmap")
+    doctor_verified: Optional[bool] = Field(default=None, description="Верификация врачом")
+    created_at: datetime = Field(description="Дата создания")
+    updated_at: Optional[datetime] = Field(default=None, description="Дата обновления")
+    confidence: Optional[float] = Field(default=None, description="Уверенность модели (0–1)")
+    tumor_detected: Optional[bool] = Field(default=None, description="Обнаружена ли аномалия")
 
     model_config = {
         "populate_by_name": True
@@ -39,6 +39,19 @@ class Pagination(BaseModel):
     limit: int
     total: int
 
+
 class ScanListResponse(BaseModel):
     items: list[Scan]
     pagination: Pagination
+
+
+class CommentCreate(BaseModel):
+    message: str = Field(description="Текст комментария врача", examples=["Рекомендую повторное исследование"])
+
+
+class ConclusionCreate(BaseModel):
+    text: str = Field(description="Текст экспертного заключения", examples=["Признаки объёмного образования..."])
+
+
+class VerifyScanBody(BaseModel):
+    verified: bool = Field(description="true — подтвердить результат ИИ, false — не согласен")

@@ -1,11 +1,15 @@
-import React, { useState, useEffect, Dispatch, SetStateAction, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
+
+import { ClinicItem } from '@features/History/types'
 
 import { api } from '@shared/api/api'
 import { getErrorMessage } from '@shared/api/getErrorMessage'
+import { useAuth } from '@shared/lib/hooks/useAuth'
 import { Button } from '@shared/ui/Button'
 import { FileUploader } from '@shared/ui/FileUploader'
 import { Input } from '@shared/ui/Input'
 import { InputType } from '@shared/ui/Input/Input'
+import { PageLoader } from '@shared/ui/Loader'
 
 import cls from './Profile.module.css'
 
@@ -14,11 +18,12 @@ export interface UserProfileData {
   surname: string
   middlename?: string
   email: string
-  job?: string
   birthday?: string
   position?: string
   phone?: string
   avatar_url?: string
+  clinic_id?: string
+  clinic_name?: string
 }
 
 export interface ProfileProps {
@@ -27,8 +32,6 @@ export interface ProfileProps {
   readOnly?: boolean
   title?: string
   className?: string
-  setIsAuthorized: Dispatch<SetStateAction<boolean>>
-  setActiveTab: Dispatch<SetStateAction<string>>
 }
 
 const initData = {
@@ -36,20 +39,16 @@ const initData = {
   surname: '',
   middlename: '',
   email: '',
-  job: '',
   birthday: '',
   position: '',
   phone: '',
   avatar_url: '',
+  clinic_id: '',
+  clinic_name: '',
 }
 
-const API_HOST = process.env.API_HOST
-
-export const Profile: React.FC<ProfileProps> = ({
-  title = 'Профиль пользователя',
-  setIsAuthorized,
-  setActiveTab,
-}) => {
+export const Profile: React.FC<ProfileProps> = ({ title = 'Профиль пользователя' }) => {
+  const { logout } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<UserProfileData>(initData)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -57,6 +56,8 @@ export const Profile: React.FC<ProfileProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [initialData, setInitialData] = useState<UserProfileData>(initData)
+  const [avatarImageUrl, setAvatarImageUrl] = useState<string | null>(null)
+  const [clinics, setClinics] = useState<ClinicItem[]>([])
 
   const uploadAvatar = (file: File | null) => {
     if (!file) return
@@ -91,9 +92,9 @@ export const Profile: React.FC<ProfileProps> = ({
         surname: formData.surname,
         middlename: formData.middlename,
         birthday: formData.birthday,
-        job: formData.job,
         position: formData.position,
         phone: formData.phone,
+        clinic_id: formData.clinic_id || null,
       })
       .then(({ data }) => {
         setFormData(data)
@@ -161,11 +162,7 @@ export const Profile: React.FC<ProfileProps> = ({
   }
 
   const exitFrom = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-
-    setIsAuthorized(false)
-    setActiveTab('auth')
+    logout()
   }
 
   // Обработчик отмены
@@ -184,6 +181,42 @@ export const Profile: React.FC<ProfileProps> = ({
   const isFormChanged = useMemo(() => {
     return JSON.stringify(formData) !== JSON.stringify(initialData)
   }, [formData, initialData])
+
+  useEffect(() => {
+    if (!formData.avatar_url) {
+      setAvatarImageUrl(null)
+      return
+    }
+
+    let objectUrl: string | null = null
+    let cancelled = false
+
+    api
+      .get(`/users/avatar/${formData.avatar_url}`, { responseType: 'blob' })
+      .then(({ data }) => {
+        if (!cancelled) {
+          objectUrl = URL.createObjectURL(data)
+          setAvatarImageUrl(objectUrl)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAvatarImageUrl(null)
+        }
+      })
+
+    return () => {
+      cancelled = true
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [formData.avatar_url])
+
+  useEffect(() => {
+    api
+      .get<{ items: ClinicItem[] }>('/clinics/')
+      .then(({ data }) => setClinics(data.items))
+      .catch(() => setClinics([]))
+  }, [])
 
   useEffect(() => {
     setIsLoading(true)
@@ -260,8 +293,10 @@ export const Profile: React.FC<ProfileProps> = ({
           <h3 className={cls.viewTitle}>Работа</h3>
           <div className={cls.viewGrid}>
             <div className={cls.viewItem}>
-              <span className={cls.viewLabel}>Организация:</span>
-              <span className={cls.viewValue}>{formatValue(formData.job)}</span>
+              <span className={cls.viewLabel}>Клиника:</span>
+              <span className={cls.viewValue}>
+                {formatValue(formData.clinic_name) || 'Не указана'}
+              </span>
             </div>
             <div className={cls.viewItem}>
               <span className={cls.viewLabel}>Должность:</span>
@@ -286,7 +321,7 @@ export const Profile: React.FC<ProfileProps> = ({
   }
 
   if (isLoading && !formData.email) {
-    return <p>Загрузка профиля...</p>
+    return <PageLoader label="Загрузка профиля..." />
   }
 
   return (
@@ -313,9 +348,9 @@ export const Profile: React.FC<ProfileProps> = ({
       </div>
 
       <div className={cls.avatarBlock}>
-        {formData.avatar_url ? (
+        {avatarImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={`${API_HOST}/${formData.avatar_url}`} alt="avatar" className={cls.avatar} />
+          <img src={avatarImageUrl} alt="avatar" className={cls.avatar} />
         ) : (
           <div className={cls.emptyAvatar}>👤</div>
         )}
@@ -361,8 +396,23 @@ export const Profile: React.FC<ProfileProps> = ({
           <div className={cls.section}>
             <h3 className={cls.sectionTitle}>Работа</h3>
             <div className={cls.fieldsGrid}>
-              {renderField('Организация', 'job', 'text', 'ООО "Компания"')}
               {renderField('Должность', 'position', 'text', 'Менеджер')}
+              <div className={cls.field}>
+                <label className={cls.selectLabel}>Клиника</label>
+                <select
+                  className={cls.select}
+                  value={formData.clinic_id || ''}
+                  onChange={(e) => handleChange('clinic_id', e.target.value)}
+                  disabled={!isEditing}
+                >
+                  <option value="">Не выбрана</option>
+                  {clinics.map((clinic) => (
+                    <option key={clinic._id} value={clinic._id}>
+                      {clinic.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
