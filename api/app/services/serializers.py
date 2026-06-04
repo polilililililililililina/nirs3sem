@@ -26,6 +26,8 @@ def scan_serializer(scan) -> dict:
         "updated_at": scan.get("updated_at"),
         "confidence": scan.get("confidence"),
         "tumor_detected": scan.get("tumor_detected"),
+        "n_slices": scan.get("n_slices"),
+        "representative_slice_idx": scan.get("representative_slice_idx"),
     }
 
 

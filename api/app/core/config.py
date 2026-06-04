@@ -19,3 +19,5 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 INPUT_DIR = os.getenv("INPUT_DIR", "storage/input")
 OUTPUT_DIR = os.getenv("OUTPUT_DIR", "storage/output")
 AVATAR_DIR = os.getenv("AVATAR_DIR", "storage/avatars")
+
+MAX_DICOM_ZIP_MB = int(os.getenv("MAX_DICOM_ZIP_MB", "200"))

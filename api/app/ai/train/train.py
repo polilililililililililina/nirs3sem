@@ -1,3 +1,8 @@
+"""
+Устаревший скрипт обучения базового U-Net.
+Для продакшена используйте: python -m app.ai.train.train_aa_unet
+"""
+
 import tensorflow as tf
 import numpy as np
 import random
@@ -80,7 +85,7 @@ callbacks = [
     ),
 
     ModelCheckpoint(
-        "app/ai/models/unet_brain_mri_final.keras",
+        "app/ai/models/aa_unet_brain_mri_final.keras",
         monitor="val_loss",
         save_best_only=True,
     ),

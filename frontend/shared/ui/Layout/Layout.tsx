@@ -39,7 +39,7 @@ export const Layout = ({ children }: LayoutProps) => {
     }
 
     if (isAuthenticated && user && user.role === 'admin') {
-      items.push({ href: '/admin', label: 'Админка' })
+      items.push({ href: '/admin', label: 'Админ' })
     }
 
     if (!isAuthenticated) items.push({ href: '/login', label: 'Вход' })

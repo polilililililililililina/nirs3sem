@@ -17,6 +17,7 @@ interface RequestDetailProps {
 }
 
 type ResultView = 'mask' | 'heatmap' | 'overlay'
+type ImageLayoutMode = 'split' | 'sideBySide'
 
 export const RequestDetail: React.FC<RequestDetailProps> = ({
   request,
@@ -26,6 +27,7 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
   const router = useRouter()
   const [inputImageUrl, setInputImageUrl] = useState<string | null>(null)
   const [resultView, setResultView] = useState<ResultView>('mask')
+  const [imageLayout, setImageLayout] = useState<ImageLayoutMode>('split')
   const [images, setImages] = useState({
     mask: null as string | null,
     heatmap: null as string | null,
@@ -36,6 +38,7 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
     if (!request?._id) {
       setInputImageUrl(null)
       setImages({ mask: null, heatmap: null, overlay: null })
+      setImageLayout('split')
       return
     }
 
@@ -220,63 +223,113 @@ export const RequestDetail: React.FC<RequestDetailProps> = ({
 
       <div className={cls.imagesSection}>
         <h4 className={cls.sectionTitle}>МРТ изображения</h4>
-        <div className={cls.imagesGrid}>
-          <div className={cls.imageContainer}>
-            <div className={`${cls.imageLabel} ${cls.first}`}>Исходное изображение</div>
-            <div className={cls.imageWrapper}>
-              {inputImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={inputImageUrl} alt="" className={cls.image} />
-              ) : (
-                <div className={cls.imagePlaceholder}>
-                  <span>Изображение недоступно</span>
-                </div>
-              )}
-            </div>
-          </div>
 
-          <div className={cls.imageContainer}>
-            <div className={cls.imageLabel}>Результат / Grad-CAM</div>
-            {request.status === 'done' && (
-              <div className={cls.viewToggle}>
-                <button
-                  type="button"
-                  className={resultView === 'mask' ? cls.viewActive : cls.viewButton}
-                  onClick={() => setResultView('mask')}
-                  disabled={!images.mask}
-                >
-                  Маска
-                </button>
-                <button
-                  type="button"
-                  className={resultView === 'heatmap' ? cls.viewActive : cls.viewButton}
-                  onClick={() => setResultView('heatmap')}
-                  disabled={!images.heatmap}
-                >
-                  Heatmap
-                </button>
-                <button
-                  type="button"
-                  className={resultView === 'overlay' ? cls.viewActive : cls.viewButton}
-                  onClick={() => setResultView('overlay')}
-                  disabled={!images.overlay}
-                >
-                  Overlay
-                </button>
+        {request.source_type === 'dicom_zip' && request.n_slices != null && (
+          <p className={cls.volumeMeta}>
+            Проанализировано срезов: {request.n_slices}
+            {request.representative_slice_idx != null &&
+              ` · для просмотра выбран срез №${request.representative_slice_idx + 1}`}
+          </p>
+        )}
+
+        {request.status === 'done' && (
+          <div className={cls.viewToggle}>
+            <button
+              type="button"
+              className={imageLayout === 'sideBySide' ? cls.viewActive : cls.viewButton}
+              onClick={() => setImageLayout('sideBySide')}
+              disabled={!inputImageUrl || !images.mask}
+            >
+              Сравнение
+            </button>
+            <button
+              type="button"
+              className={imageLayout === 'split' && resultView === 'mask' ? cls.viewActive : cls.viewButton}
+              onClick={() => {
+                setImageLayout('split')
+                setResultView('mask')
+              }}
+              disabled={!images.mask}
+            >
+              Маска
+            </button>
+            <button
+              type="button"
+              className={
+                imageLayout === 'split' && resultView === 'heatmap' ? cls.viewActive : cls.viewButton
+              }
+              onClick={() => {
+                setImageLayout('split')
+                setResultView('heatmap')
+              }}
+              disabled={!images.heatmap}
+            >
+              Heatmap
+            </button>
+            <button
+              type="button"
+              className={
+                imageLayout === 'split' && resultView === 'overlay' ? cls.viewActive : cls.viewButton
+              }
+              onClick={() => {
+                setImageLayout('split')
+                setResultView('overlay')
+              }}
+              disabled={!images.overlay}
+            >
+              Overlay
+            </button>
+          </div>
+        )}
+
+        {imageLayout === 'sideBySide' && inputImageUrl && images.mask ? (
+          <div className={cls.sideBySide}>
+            <div className={cls.sideBySidePane}>
+              <div className={cls.imageLabel}>Исходное изображение</div>
+              <div className={cls.imageWrapper}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={inputImageUrl} alt="" className={cls.image} />
               </div>
-            )}
-            <div className={cls.imageWrapper}>
-              {activeResultImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={activeResultImage} alt="" className={cls.image} />
-              ) : (
-                <div className={cls.imagePlaceholder}>
-                  <span>{request.status === 'processing' ? 'Обработка...' : 'Недоступно'}</span>
-                </div>
-              )}
+            </div>
+            <div className={cls.sideBySidePane}>
+              <div className={cls.imageLabel}>Маска сегментации</div>
+              <div className={cls.imageWrapper}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={images.mask} alt="" className={cls.image} />
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className={cls.imagesGrid}>
+            <div className={cls.imageContainer}>
+              <div className={cls.imageLabel}>Исходное изображение</div>
+              <div className={cls.imageWrapper}>
+                {inputImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={inputImageUrl} alt="" className={cls.image} />
+                ) : (
+                  <div className={cls.imagePlaceholder}>
+                    <span>Изображение недоступно</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={cls.imageContainer}>
+              <div className={cls.imageLabel}>Результат / Grad-CAM</div>
+              <div className={cls.imageWrapper}>
+                {activeResultImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={activeResultImage} alt="" className={cls.image} />
+                ) : (
+                  <div className={cls.imagePlaceholder}>
+                    <span>{request.status === 'processing' ? 'Обработка...' : 'Недоступно'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {request.status === 'done' && (

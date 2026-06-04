@@ -20,7 +20,18 @@ class Scan(BaseModel):
     is_guest: bool = Field(description="Гостевая загрузка без авторизации")
     result: Optional[str] = Field(default=None, description="Путь к маске сегментации")
     result_desc: Optional[str] = Field(default=None, description="Текстовое описание результата")
-    source_type: Optional[str] = Field(default="image", description="image или dicom")
+    source_type: Optional[str] = Field(
+        default="image",
+        description="image, dicom или dicom_zip",
+    )
+    n_slices: Optional[int] = Field(
+        default=None,
+        description="Число срезов (для dicom_zip)",
+    )
+    representative_slice_idx: Optional[int] = Field(
+        default=None,
+        description="Индекс среза с макс. площадью поражения",
+    )
     heatmap_path: Optional[str] = Field(default=None, description="Grad-CAM overlay")
     heatmap_raw_path: Optional[str] = Field(default=None, description="Grad-CAM heatmap")
     doctor_verified: Optional[bool] = Field(default=None, description="Верификация врачом")

@@ -109,6 +109,19 @@
   margin-top: 12px;
 }
 
+.errorBox {
+  padding: 12px 14px;
+  margin-top: 12px;
+  background: #fff5f5;
+  border: 1px solid #f5c2c7;
+  border-radius: 8px;
+}
+
+.errorBox .error {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .suggestedArticles {
   margin-top: 8px;
 }
@@ -139,4 +152,31 @@
 
 .processingState span {
   color: #fff;
+}
+
+.sideBySide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.sideBySidePane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.sideBySideLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+@media (max-width: 768px) {
+  .sideBySide {
+    grid-template-columns: 1fr;
+  }
 }

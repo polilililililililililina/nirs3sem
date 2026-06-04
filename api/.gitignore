@@ -9,4 +9,7 @@ storage/
 .env
 
 /app/ai/datasets/
+/app/ai/train/outputs/
+/app/ai/models/*.keras
+!app/ai/models/.gitkeep
 

@@ -14,8 +14,16 @@ import cls from './Main.module.css'
 
 const SOCKET = process.env.SOCKET
 
-type UploadMode = 'image' | 'dicom'
-type ResultView = 'mask' | 'original' | 'heatmap' | 'overlay'
+const UPLOAD_ENDPOINTS = {
+  image: '/scans/upload',
+  dicom: '/scans/upload-dicom',
+  dicom_zip: '/scans/upload-dicom-zip',
+} as const
+
+const DICOM_ZIP_MAX_MB = 200
+
+type UploadMode = keyof typeof UPLOAD_ENDPOINTS
+type ResultView = 'mask' | 'original' | 'heatmap' | 'overlay' | 'sideBySide'
 type ScanStatus = 'idle' | 'queued' | 'processing' | 'done' | 'error' | 'expired'
 
 interface AnalysisResult {
@@ -56,10 +64,8 @@ export const Main = () => {
     const formData = new FormData()
     formData.append('file', file)
 
-    const endpoint = uploadMode === 'dicom' ? '/scans/upload-dicom' : '/scans/upload'
-
     api
-      .post(endpoint, formData, {
+      .post(UPLOAD_ENDPOINTS[uploadMode], formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -76,7 +82,7 @@ export const Main = () => {
   }
 
   const loadResultImages = async (scanId: string) => {
-    const urls: Partial<Record<ResultView, string>> = {}
+    const urls: Partial<Record<Exclude<ResultView, 'sideBySide'>, string>> = {}
 
     const fetchBlob = async (path: string) => {
       const response = await api.get(path, { responseType: 'blob' })
@@ -141,6 +147,7 @@ export const Main = () => {
         setAnalysis({
           confidence: data.confidence,
           tumor_detected: data.tumor_detected,
+          result_desc: data.result_desc,
         })
         await loadResultImages(fileId)
         setIsLoading(false)
@@ -148,7 +155,14 @@ export const Main = () => {
       }
 
       if (data.status === 'error') {
-        setError(data.message || 'Произошла ошибка во время обработки')
+        const raw = (data.message || data.result_desc || '').trim()
+        let msg = raw || 'Произошла ошибка во время обработки'
+        if (raw.includes('Lambda layer') || raw.includes('safe_mode')) {
+          msg =
+            'Не удалось загрузить модель нейросети. Перезапустите API или переобучите модель (train_aa_unet).'
+        }
+        setError(msg)
+        setAnalysis(null)
         setIsLoading(false)
         socket.close()
       }
@@ -164,12 +178,62 @@ export const Main = () => {
   }, [fileId])
 
   const activeImage = useMemo(() => {
+    if (resultView === 'sideBySide') return null
     return images[resultView]
   }, [images, resultView])
+
+  const showSideBySide =
+    resultView === 'sideBySide' && Boolean(images.original && images.mask)
 
   const hasConfidence = analysis?.confidence !== undefined && analysis?.confidence !== null
 
   const isProcessing = isLoading || status === 'queued' || status === 'processing'
+
+  const processingLabel = useMemo(() => {
+    if (isLoading) return 'Загрузка файла...'
+    if (status === 'queued') return 'Файл в очереди на обработку...'
+    if (uploadMode === 'dicom_zip') return 'Нейросеть анализирует серию DICOM-срезов...'
+    return 'Нейросеть анализирует изображение...'
+  }, [isLoading, status, uploadMode])
+
+  const renderUploader = () => {
+    if (uploadMode === 'image') {
+      return (
+        <FileUploader
+          key="image"
+          acceptType="image"
+          allowedExtensions={['.jpg', '.jpeg', '.png', '.gif', '.webp']}
+          buttonText="Загрузить фото"
+          onFileSelect={uploadScan}
+          placeholder="Выберите изображение"
+        />
+      )
+    }
+
+    if (uploadMode === 'dicom') {
+      return (
+        <FileUploader
+          key="dicom"
+          acceptType="file"
+          allowedExtensions={['.dcm']}
+          buttonText="Загрузить DICOM"
+          onFileSelect={uploadScan}
+          placeholder="Выберите DICOM файл (.dcm)"
+        />
+      )
+    }
+
+    return (
+      <FileUploader
+        key="dicom_zip"
+        acceptType="file"
+        allowedExtensions={['.zip']}
+        buttonText="Загрузить ZIP"
+        onFileSelect={uploadScan}
+        placeholder="Выберите ZIP-архив с DICOM (.dcm)"
+      />
+    )
+  }
 
   return (
     <>
@@ -202,25 +266,16 @@ export const Main = () => {
             >
               DICOM (.dcm)
             </button>
+            <button
+              type="button"
+              className={uploadMode === 'dicom_zip' ? cls.modeActive : cls.modeButton}
+              onClick={() => setUploadMode('dicom_zip')}
+            >
+              DICOM (ZIP)
+            </button>
           </div>
 
-          {uploadMode === 'image' ? (
-            <FileUploader
-              acceptType="image"
-              allowedExtensions={['.jpg', '.jpeg', '.png', '.gif', '.webp']}
-              buttonText="Загрузить фото"
-              onFileSelect={uploadScan}
-              placeholder="Выберите изображение"
-            />
-          ) : (
-            <FileUploader
-              acceptType="file"
-              allowedExtensions={['.dcm']}
-              buttonText="Загрузить DICOM"
-              onFileSelect={uploadScan}
-              placeholder="Выберите DICOM файл (.dcm)"
-            />
-          )}
+          {renderUploader()}
         </div>
 
         <div className={cls.block}>
@@ -246,6 +301,14 @@ export const Main = () => {
               </button>
               <button
                 type="button"
+                className={resultView === 'sideBySide' ? cls.viewActive : cls.viewButton}
+                onClick={() => setResultView('sideBySide')}
+                disabled={!images.original || !images.mask}
+              >
+                Сравнение
+              </button>
+              <button
+                type="button"
                 className={resultView === 'heatmap' ? cls.viewActive : cls.viewButton}
                 onClick={() => setResultView('heatmap')}
                 disabled={!images.heatmap}
@@ -264,25 +327,34 @@ export const Main = () => {
           )}
 
           <div className={cls.border}>
-            {isProcessing && !activeImage && (
+            {isProcessing && !showSideBySide && !activeImage && (
               <div className={cls.processingState}>
-                <Loader
-                  size="lg"
-                  label={
-                    isLoading
-                      ? 'Загрузка файла...'
-                      : status === 'queued'
-                        ? 'Файл в очереди на обработку...'
-                        : 'Нейросеть анализирует изображение...'
-                  }
-                />
+                <Loader size="lg" label={processingLabel} />
               </div>
             )}
 
-            {activeImage ? (
+            {showSideBySide && (
+              <div className={cls.sideBySide}>
+                <div className={cls.sideBySidePane}>
+                  <span className={cls.sideBySideLabel}>Исходник</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className={cls.resultImg} src={images.original!} alt="Исходное изображение" />
+                </div>
+                <div className={cls.sideBySidePane}>
+                  <span className={cls.sideBySideLabel}>Маска сегментации</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className={cls.resultImg} src={images.mask!} alt="Маска сегментации" />
+                </div>
+              </div>
+            )}
+
+            {!showSideBySide && activeImage && (
               // eslint-disable-next-line @next/next/no-img-element
               <img className={cls.resultImg} src={activeImage} alt="Результат обработки" />
-            ) : (
+            )}
+
+            {!showSideBySide &&
+              !activeImage &&
               !isProcessing && (
                 <>
                   {status === 'error' && (
@@ -296,9 +368,14 @@ export const Main = () => {
                   {error && status !== 'expired' && <p className={cls.error}>{error}</p>}
                   {status === 'idle' && <p>Загрузите файл, чтобы получить результаты.</p>}
                 </>
-              )
-            )}
+              )}
           </div>
+
+          {status === 'error' && error && (
+            <div className={cls.errorBox}>
+              <p className={cls.error}>{error}</p>
+            </div>
+          )}
 
           {analysis && status === 'done' && (
             <div className={cls.analysisBox}>
@@ -306,7 +383,9 @@ export const Main = () => {
                 <p className={cls.white}>Уверенность: {(analysis.confidence * 100).toFixed(1)}%</p>
               )}
 
-              {analysis.tumor_detected ? (
+              {analysis.result_desc ? (
+                <p className={cls.white}>{analysis.result_desc}</p>
+              ) : analysis.tumor_detected ? (
                 <p className={cls.warning}>
                   Обнаружены признаки возможной аномалии. Результат носит вспомогательный характер и
                   не является медицинским диагнозом.
@@ -327,8 +406,8 @@ export const Main = () => {
 
       <div className={cls.bottom}>
         <h2 className={cls.white}>
-          Загрузите МРТ-снимок (изображение или DICOM) и получите автоматическую сегментацию
-          подозрительных областей с Grad-CAM визуализацией.
+          Загрузите МРТ-снимок (изображение, DICOM или ZIP с серией) и получите автоматическую
+          сегментацию подозрительных областей с Grad-CAM визуализацией.
         </h2>
 
         <h4>
@@ -339,7 +418,9 @@ export const Main = () => {
         </h4>
 
         <h3 className={cls.white}>Как это работает</h3>
-        <h4 className={cls.white}>1. Загрузка — изображение (PNG/JPG) или DICOM-файл (.dcm).</h4>
+        <h4 className={cls.white}>
+          1. Загрузка — изображение (PNG/JPG), один DICOM (.dcm) или ZIP с папкой DICOM.
+        </h4>
         <h4 className={cls.white}>
           2. Анализ нейросетью — модель сегментирует возможные отклонения.
         </h4>

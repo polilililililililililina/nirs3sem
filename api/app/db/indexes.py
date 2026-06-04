@@ -14,7 +14,7 @@ async def ensure_indexes() -> None:
     await db.knowledge.create_index("tags")
     await db.knowledge.create_index("pathology_type")
     await db.knowledge.create_index("source")
-    await db.knowledge.create_index("source_url", unique=True, sparse=True)
+#    await db.knowledge.create_index("source_url", unique=True, sparse=True)
 
     await db.clinics.create_index("name")
 

@@ -133,8 +133,23 @@
   color: #495057;
 }
 
-.first {
-  padding-bottom: 40px;
+.volumeMeta {
+  margin: -8px 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057;
+}
+
+.sideBySide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.sideBySidePane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .imageWrapper {
@@ -393,7 +408,8 @@
 }
 
 @media (max-width: 768px) {
-  .imagesGrid {
+  .imagesGrid,
+  .sideBySide {
     grid-template-columns: 1fr;
   }
 

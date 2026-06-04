@@ -17,6 +17,8 @@ export interface ScanItem {
   updated_at?: string | null
   confidence?: number | null
   tumor_detected?: boolean | null
+  n_slices?: number | null
+  representative_slice_idx?: number | null
 }
 
 export interface Pagination {

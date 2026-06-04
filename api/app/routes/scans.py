@@ -8,15 +8,16 @@ from app.services.scan_access import can_access_scan
 from app.services.patient_access import can_doctor_access_patient, patient_summary
 from app.services.files import delete_scan_files
 from app.core.time import utc_now
-import uuid
-from typing import Optional, Literal
 import os
+import shutil
+import uuid
 from datetime import datetime, timedelta
+from typing import Literal, Optional
 from app.services.queue import scan_queue
 from app.sockets.manager import manager
-from app.ai.services.dicom_parser import dicom_to_png, is_dicom_file
-
-from app.core.config import INPUT_DIR
+from app.ai.services.dicom_loader import dicom_to_png, find_dicom_file_paths, is_dicom_file
+from app.core.config import INPUT_DIR, MAX_DICOM_ZIP_MB
+from app.services.dicom_zip import UnsafeZipError, safe_extract_zip
 
 router = APIRouter(prefix="/scans", tags=["Scans"])
 
@@ -90,7 +91,7 @@ async def upload(
         doc["expires_at"] = created + timedelta(hours=1)
 
     await db.scans.insert_one(doc)
-    await scan_queue.put({"scan_id": scan_id, "path": path})
+    await scan_queue.put({"scan_id": scan_id, "path": path, "mode": "image"})
 
     return {"id": scan_id}
 
@@ -138,7 +139,85 @@ async def upload_dicom(
         doc["expires_at"] = created + timedelta(hours=1)
 
     await db.scans.insert_one(doc)
-    await scan_queue.put({"scan_id": scan_id, "path": png_path})
+    await scan_queue.put({"scan_id": scan_id, "path": png_path, "mode": "dicom"})
+
+    return {"id": scan_id}
+
+
+@router.post("/upload-dicom-zip", summary="Загрузить ZIP с DICOM-файлами (.dcm)")
+async def upload_dicom_zip(
+    file: UploadFile = File(...),
+    user=Depends(get_current_user_optional),
+):
+    filename = file.filename or ""
+
+    if not filename.lower().endswith(".zip"):
+        raise HTTPException(400, "Можно загружать только ZIP-архивы (.zip)")
+
+    content = await file.read()
+    max_bytes = MAX_DICOM_ZIP_MB * 1024 * 1024
+    if len(content) > max_bytes:
+        raise HTTPException(
+            400,
+            f"Размер архива не должен превышать {MAX_DICOM_ZIP_MB} МБ",
+        )
+
+    scan_id = str(uuid.uuid4())
+    scan_dir = os.path.join(INPUT_DIR, scan_id)
+    zip_path = os.path.join(scan_dir, "archive.zip")
+    preview_path = os.path.join(INPUT_DIR, f"{scan_id}.png")
+
+    os.makedirs(scan_dir, exist_ok=True)
+
+    with open(zip_path, "wb") as f:
+        f.write(content)
+
+    try:
+        safe_extract_zip(zip_path, scan_dir)
+    except UnsafeZipError as exc:
+        shutil.rmtree(scan_dir, ignore_errors=True)
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        shutil.rmtree(scan_dir, ignore_errors=True)
+        raise HTTPException(400, f"Не удалось распаковать архив: {exc}") from exc
+
+    dicom_paths = find_dicom_file_paths(scan_dir)
+    if not dicom_paths:
+        shutil.rmtree(scan_dir, ignore_errors=True)
+        raise HTTPException(
+            400,
+            "В архиве не найдено DICOM-файлов. "
+            "Ожидаются файлы .dcm / .dicom или DICOM без расширения (в т.ч. во вложенных папках).",
+        )
+
+    created = utc_now()
+    doc = {
+        "_id": scan_id,
+        "user_id": user["_id"] if user else None,
+        "is_guest": user is None,
+        "filename": filename or f"{scan_id}.zip",
+        "file_path": preview_path,
+        "dicom_folder": scan_dir,
+        "dicom_zip_path": zip_path,
+        "input_dir": scan_dir,
+        "source_type": "dicom_zip",
+        "status": ScanStatus.queued,
+        "created_at": created,
+    }
+
+    if user is None:
+        doc["expires_at"] = created + timedelta(hours=1)
+
+    await db.scans.insert_one(doc)
+    await scan_queue.put(
+        {
+            "scan_id": scan_id,
+            "mode": "dicom_zip",
+            "dicom_folder": scan_dir,
+            "path": preview_path,
+            "preview_path": preview_path,
+        }
+    )
 
     return {"id": scan_id}
 
